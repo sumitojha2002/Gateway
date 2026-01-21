@@ -1,0 +1,70 @@
+.filterContainer {
+  display: flex;
+  position: absolute;
+  padding: 1rem;
+  background-color: white;
+  border-bottom-left-radius: 0.125rem;
+  border-bottom-right-radius: 0.125rem;
+  filter: drop-shadow(0 20px 13px rgb(0 0 0 / 0.03))
+    drop-shadow(0 8px 5px rgb(0 0 0 / 0.08));
+  top: 16.25rem; /* Mobile */
+}
+
+.responsiveText p {
+  font-size: 10px;
+}
+
+/* sm:top-95 */
+@media (min-width: 640px) {
+  .responsiveText p {
+    font-size: 12px;
+  }
+  .filterContainer {
+    top: 23.75rem;
+  }
+}
+
+/* md:top-125 */
+@media (min-width: 768px) {
+  .responsiveText p {
+    font-size: 12px;
+  }
+  .filterContainer {
+    top: 31.25rem;
+  }
+}
+
+/* lg:top-160 */
+@media (min-width: 1024px) {
+  .responsiveText p {
+    font-size: 12px;
+  }
+  .filterContainer {
+    top: 38rem;
+  }
+}
+
+.responsiveSearchButton {
+  /* Default/Large Screen Padding (original pl-19 pr-19) */
+  font-size: 12px;
+  width: auto;
+  padding-left: 4.75rem;
+  padding-right: 4.75rem;
+}
+
+/* Adjust padding for medium screens (e.g., tablet size) */
+@media (max-width: 1023px) {
+  .responsiveSearchButton {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+/* Adjust padding for small screens (e.g., mobile size) */
+@media (max-width: 767px) {
+  .responsiveSearchButton {
+    /* Significantly reduces padding on mobile to save space */
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
