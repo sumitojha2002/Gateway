@@ -35,7 +35,7 @@ export default async function ExplorePage({
   const params = await searchParams;
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4 mb-5">
       <Suspense fallback={<JobsLoadingSkeleton />}>
         <JobsDataFetcher params={params} />
       </Suspense>

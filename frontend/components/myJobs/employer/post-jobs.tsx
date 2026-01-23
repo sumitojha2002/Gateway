@@ -20,7 +20,7 @@ type PostJobsProps = {
 export function PostJobs({ skills }: PostJobsProps) {
   const [postJob] = usePostJobsMutation();
   const [loadingAction, setLoadingAction] = useState<"post" | "draft" | null>(
-    null
+    null,
   );
 
   const form = useForm<postJobFormValues>({
@@ -51,7 +51,7 @@ export function PostJobs({ skills }: PostJobsProps) {
 
   const buildFormData = (
     values: postJobFormValues,
-    action: "post" | "draft"
+    action: "post" | "draft",
   ) => {
     const formData = new FormData();
 
@@ -73,7 +73,7 @@ export function PostJobs({ skills }: PostJobsProps) {
         upper: values.years_of_experience.upper
           ? Number(values.years_of_experience.upper)
           : null,
-      })
+      }),
     );
 
     formData.append(
@@ -85,7 +85,7 @@ export function PostJobs({ skills }: PostJobsProps) {
         upper: values.salary_range.upper
           ? Number(values.salary_range.upper)
           : null,
-      })
+      }),
     );
 
     formData.append(
@@ -93,7 +93,7 @@ export function PostJobs({ skills }: PostJobsProps) {
       JSON.stringify({
         add: values.skills.add || [],
         remove: values.skills.remove || [],
-      })
+      }),
     );
 
     return formData;
@@ -101,7 +101,7 @@ export function PostJobs({ skills }: PostJobsProps) {
 
   const handleSubmitForm = async (
     values: postJobFormValues,
-    action: "post" | "draft"
+    action: "post" | "draft",
   ) => {
     setLoadingAction(action);
 
@@ -114,7 +114,7 @@ export function PostJobs({ skills }: PostJobsProps) {
           action === "post"
             ? "Job has been posted successfully"
             : "Job has been saved as draft"
-        }`
+        }`,
       );
       form.reset();
     } catch (err) {
@@ -134,7 +134,7 @@ export function PostJobs({ skills }: PostJobsProps) {
   const filteredSkills = allSkills.filter(
     (skill) =>
       skill.toLowerCase().includes(skillInput.toLowerCase()) &&
-      !addedSkills.includes(skill)
+      !addedSkills.includes(skill),
   );
 
   const jobTypes = [
@@ -279,7 +279,7 @@ export function PostJobs({ skills }: PostJobsProps) {
                           const selected = ExperienceLevelValue.find(
                             (opt) =>
                               `${opt.lower}-${opt.upper ?? "null"}` ===
-                              e.target.value
+                              e.target.value,
                           );
 
                           if (selected) {
@@ -371,7 +371,7 @@ export function PostJobs({ skills }: PostJobsProps) {
                           {
                             shouldDirty: true,
                             shouldValidate: true,
-                          }
+                          },
                         );
                       }}
                     />
@@ -394,7 +394,7 @@ export function PostJobs({ skills }: PostJobsProps) {
                 />
 
                 {showSkillsList && skillInput && filteredSkills.length > 0 && (
-                  <div className="absolute z-50 mt-1 w-full border bg-white shadow-md max-h-40 overflow-y-auto rounded-md">
+                  <div className="absolute z-50 mt-4 w-full border bg-white shadow-md max-h-40 overflow-y-auto rounded-md">
                     {filteredSkills.map((skill) => (
                       <div
                         key={skill}
@@ -523,7 +523,7 @@ export function PostJobs({ skills }: PostJobsProps) {
               onClick={() => {
                 form.setValue("action", "post", { shouldValidate: false });
                 form.handleSubmit((values) =>
-                  handleSubmitForm(values, "post")
+                  handleSubmitForm(values, "post"),
                 )();
               }}
             >
@@ -537,7 +537,7 @@ export function PostJobs({ skills }: PostJobsProps) {
               onClick={() => {
                 form.setValue("action", "draft", { shouldValidate: false });
                 form.handleSubmit((values) =>
-                  handleSubmitForm(values, "draft")
+                  handleSubmitForm(values, "draft"),
                 )();
               }}
             >

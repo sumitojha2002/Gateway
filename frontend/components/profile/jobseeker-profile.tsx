@@ -78,7 +78,7 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
 
   const [edit, setEdit] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(
-    user.profile_pic || null
+    user.profile_pic || null,
   );
   const [resumeFileName, setResumeFileName] = useState<string | null>(null);
   const resumeInputRef = useRef<HTMLInputElement>(null);
@@ -222,7 +222,8 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
     const formData = new FormData();
 
     formData.append("username", updatedValues.username ?? "");
-    formData.append("phone", updatedValues.phone ?? "");
+    formData.append("contact", updatedValues.phone ?? "");
+    formData.append("dob", updatedValues.dob ?? "");
     formData.append("location", updatedValues.location ?? "");
     formData.append("bio", updatedValues.bio ?? "");
 
@@ -263,16 +264,16 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
 
     //Skills
     const originalSkillNames = (originalValues.skills ?? []).map(
-      (s: Skill) => s.name
+      (s: Skill) => s.name,
     );
     const currentSkillNames = (updatedValues.skills ?? []).map(
-      (s: Skill) => s.name
+      (s: Skill) => s.name,
     );
 
     const skillsPayload = {
       add: currentSkillNames,
       remove: originalSkillNames.filter(
-        (name) => !currentSkillNames.includes(name)
+        (name) => !currentSkillNames.includes(name),
       ),
     };
     formData.append("skills", JSON.stringify(skillsPayload));
@@ -281,13 +282,13 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
 
     formData.append(
       "experiences_data",
-      JSON.stringify(updatedValues.experiences) ?? []
+      JSON.stringify(updatedValues.experiences) ?? [],
     );
 
     //education
     formData.append(
       "education_data",
-      JSON.stringify(updatedValues.education) ?? []
+      JSON.stringify(updatedValues.education) ?? [],
     );
 
     try {
@@ -327,7 +328,7 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
         alert(
           err?.data?.message ||
             err?.error?.data?.message ||
-            "Failed to update profile"
+            "Failed to update profile",
         );
       }
     }
@@ -380,7 +381,7 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
         (exp) =>
           exp.work_place.toLowerCase() === parsed.work_place.toLowerCase() &&
           exp.role.toLowerCase() === parsed.role.toLowerCase() &&
-          exp.start_date === parsed.start_date
+          exp.start_date === parsed.start_date,
       );
 
       if (isDuplicate) {
@@ -417,7 +418,7 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
     }[];
 
     const isDuplicate = existing.some(
-      (s) => s.name.toLowerCase() === draft.name?.toLowerCase()
+      (s) => s.name.toLowerCase() === draft.name?.toLowerCase(),
     );
 
     if (isDuplicate) {
@@ -439,7 +440,7 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
   const removeSkill = (indexToRemove: number) => {
     const currentSkills = form.getValues("skills") ?? [];
     const updatedSkills = currentSkills.filter(
-      (_, index) => index !== indexToRemove
+      (_, index) => index !== indexToRemove,
     );
     form.setValue("skills", updatedSkills, {
       shouldDirty: true,
@@ -459,7 +460,7 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
         (edu) =>
           edu.institution.toLowerCase() === parsed.institution.toLowerCase() &&
           edu.level.toLowerCase() === parsed.level.toLowerCase() &&
-          edu.start_date === parsed.start_date
+          edu.start_date === parsed.start_date,
       );
 
       if (isDuplicate) {
@@ -654,7 +655,7 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
                             ExperienceLevelValue.find(
                               (opt) =>
                                 opt.lower === field.value?.lower &&
-                                opt.upper === field.value?.upper
+                                opt.upper === field.value?.upper,
                             )?.label || "";
 
                           return (
@@ -668,7 +669,7 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
             ${!edit ? "bg-white text-[#838383]" : "bg-white text-black"}`}
                                 onChange={(e) => {
                                   const selected = ExperienceLevelValue.find(
-                                    (opt) => opt.label === e.target.value
+                                    (opt) => opt.label === e.target.value,
                                   );
 
                                   if (!selected) return;
@@ -1136,7 +1137,7 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
 
                       // Filter the skillList based on what user typed
                       const filteredSkills = skillList.filter((skill: any) =>
-                        skill.name.toLowerCase().includes(value.toLowerCase())
+                        skill.name.toLowerCase().includes(value.toLowerCase()),
                       );
 
                       return (

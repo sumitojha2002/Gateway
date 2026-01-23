@@ -76,7 +76,7 @@ type RangeValue = {
 
 function parseRange(
   value?: string | null | object,
-  defaultValue: RangeValue = { lower: "", upper: "" }
+  defaultValue: RangeValue = { lower: "", upper: "" },
 ): RangeValue {
   if (!value) return defaultValue;
 
@@ -134,7 +134,7 @@ export function EditJob({ skills, data }: EditJobProps) {
   const [updateJob] = useUpdateJobMutation();
   const [patchJob] = usePatchJobMutation();
   const [loadingAction, setLoadingAction] = useState<"post" | "draft" | null>(
-    null
+    null,
   );
 
   const [skillInput, setSkillInput] = useState("");
@@ -213,9 +213,9 @@ export function EditJob({ skills, data }: EditJobProps) {
       allSkills.filter(
         (skill) =>
           skill.toLowerCase().includes(skillInput.toLowerCase()) &&
-          !addedSkills.includes(skill)
+          !addedSkills.includes(skill),
       ),
-    [allSkills, skillInput, addedSkills]
+    [allSkills, skillInput, addedSkills],
   );
 
   const removeSkill = useCallback(
@@ -227,10 +227,10 @@ export function EditJob({ skills, data }: EditJobProps) {
         {
           shouldDirty: true,
           shouldValidate: true,
-        }
+        },
       );
     },
-    [form]
+    [form],
   );
 
   const addSkill = useCallback(
@@ -242,7 +242,7 @@ export function EditJob({ skills, data }: EditJobProps) {
       setSkillInput("");
       setShowSkillsList(false);
     },
-    [form, addedSkills]
+    [form, addedSkills],
   );
 
   // Build FormData for PUT (full update)
@@ -260,7 +260,7 @@ export function EditJob({ skills, data }: EditJobProps) {
         "status",
         action === "post"
           ? CONSTANTS.JOB_STATUS.ACTIVE
-          : CONSTANTS.JOB_STATUS.DRAFT
+          : CONSTANTS.JOB_STATUS.DRAFT,
       );
 
       formData.append(
@@ -269,7 +269,7 @@ export function EditJob({ skills, data }: EditJobProps) {
           bounds: CONSTANTS.RANGE_BOUNDS,
           lower: values.years_of_experience?.lower ?? null,
           upper: values.years_of_experience?.upper ?? null,
-        })
+        }),
       );
 
       formData.append(
@@ -277,7 +277,7 @@ export function EditJob({ skills, data }: EditJobProps) {
         JSON.stringify({
           lower: values.salary_range?.lower ?? null,
           upper: values.salary_range?.upper ?? null,
-        })
+        }),
       );
 
       formData.append(
@@ -285,12 +285,12 @@ export function EditJob({ skills, data }: EditJobProps) {
         JSON.stringify({
           add: (values.skills.add ?? []).map(String),
           remove: (values.skills.remove ?? []).map(String),
-        })
+        }),
       );
 
       return formData;
     },
-    []
+    [],
   );
 
   // Build FormData for PATCH (partial update)
@@ -343,7 +343,7 @@ export function EditJob({ skills, data }: EditJobProps) {
           JSON.stringify({
             lower: lower,
             upper: upper,
-          })
+          }),
         );
       }
 
@@ -351,10 +351,10 @@ export function EditJob({ skills, data }: EditJobProps) {
         const originalSkills = data.skills?.map((s) => s.name) ?? [];
         const currentSkills = values.skills.add ?? [];
         const addedSkills = currentSkills.filter(
-          (skill) => !originalSkills.includes(skill)
+          (skill) => !originalSkills.includes(skill),
         );
         const removedSkills = originalSkills.filter(
-          (skill) => !currentSkills.includes(skill)
+          (skill) => !currentSkills.includes(skill),
         );
 
         if (addedSkills.length > 0 || removedSkills.length > 0) {
@@ -363,7 +363,7 @@ export function EditJob({ skills, data }: EditJobProps) {
             JSON.stringify({
               add: addedSkills,
               remove: removedSkills,
-            })
+            }),
           );
         }
       }
@@ -372,12 +372,12 @@ export function EditJob({ skills, data }: EditJobProps) {
 
       return formData;
     },
-    [form.formState.dirtyFields, data.skills]
+    [form.formState.dirtyFields, data.skills],
   );
   // Submit handler
   const handleSubmitForm = async (
     values: postJobFormValues,
-    action: "post" | "draft"
+    action: "post" | "draft",
   ) => {
     setLoadingAction(action);
 
@@ -408,7 +408,7 @@ export function EditJob({ skills, data }: EditJobProps) {
         }).unwrap();
 
         alert("Job posted successfully.");
-        router.push("/employer/my-jobs/draft");
+        router.back();
       }
     } catch (err: any) {
       console.error("Error submitting job:", err);
@@ -562,7 +562,7 @@ export function EditJob({ skills, data }: EditJobProps) {
 
                     const currentSelectValue = getSelectValue(
                       field.value?.lower,
-                      field.value?.upper
+                      field.value?.upper,
                     );
 
                     return (
@@ -794,7 +794,7 @@ export function EditJob({ skills, data }: EditJobProps) {
               onClick={() => {
                 form.setValue("action", "post", { shouldValidate: false });
                 form.handleSubmit((values) =>
-                  handleSubmitForm(values, "post")
+                  handleSubmitForm(values, "post"),
                 )();
               }}
               disabled={loadingAction !== null}
@@ -808,7 +808,7 @@ export function EditJob({ skills, data }: EditJobProps) {
               onClick={() => {
                 form.setValue("action", "draft", { shouldValidate: false });
                 form.handleSubmit((values) =>
-                  handleSubmitForm(values, "draft")
+                  handleSubmitForm(values, "draft"),
                 )();
               }}
               disabled={loadingAction !== null || !isDirty}
