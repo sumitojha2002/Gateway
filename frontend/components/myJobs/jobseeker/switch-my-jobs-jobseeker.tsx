@@ -20,17 +20,17 @@ export function SwitchMyJobsJobSeeker() {
   return (
     <div
       className={
-        "md:border md:border-[#4A70A9] rounded-md overflow-hidden md:h-40 grid-cols-2 mb-10 grid md:flex md:flex-col gap-1 md:gap-0"
+        "md:border md:border-[#4A70A9]  overflow-hidden md:h-40 grid-cols-2 mb-10 grid md:flex md:flex-col gap-1 md:gap-0"
       }
     >
       <div className="md:h-20 h-10 ">
         <Link
           href={`/job_seeker/my-jobs/applied-jobs`}
           className={cn(
-            "md:w-50 w-35  flex items-center justify-center",
+            "md:w-50 w-35  flex items-center justify-center rounded-none!",
             buttonVariants({
               variant: isMyJobsActive ? "brand" : "outline",
-            })
+            }),
           )}
           style={{ height: "100%" }}
         >
@@ -41,10 +41,10 @@ export function SwitchMyJobsJobSeeker() {
         <Link
           href={`/job_seeker/my-jobs/bookmarks`}
           className={cn(
-            "md:w-50 w-35  flex items-center justify-center",
+            "md:w-50 w-35  flex items-center justify-center rounded-none!",
             buttonVariants({
               variant: isBookmarksActive ? "brand" : "outline",
-            })
+            }),
           )}
           style={{ height: "100%" }}
         >

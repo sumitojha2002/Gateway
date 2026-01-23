@@ -5,6 +5,7 @@ import { StaticImageData } from "next/image";
 import Image from "next/image";
 import Link from "next/link";
 import { ApplyBtn } from "./button/apply-btn";
+import ProfileImage from "@/public/user_profile.jpg";
 
 interface JobPageProps {
   id: number | string;
@@ -27,7 +28,7 @@ export function JobDetailCard({
         <div className="pl-6 pr-6">
           <div className="w-full flex justify-center">
             <Image
-              src={pfp}
+              src={pfp ? pfp : ProfileImage}
               alt="company_image_logo"
               width={220}
               height={180}
@@ -54,7 +55,7 @@ export function JobDetailCard({
                 href={"https://www.facebook.com/"}
                 className={cn(
                   buttonVariants({ variant: "outline" }),
-                  "text-[13px] border-[#4A70A9] rounded-none"
+                  "text-[13px] border-[#4A70A9] rounded-none",
                 )}
               >
                 Facebook
@@ -63,7 +64,7 @@ export function JobDetailCard({
                 href={"https://www.facebook.com/"}
                 className={cn(
                   buttonVariants({ variant: "outline" }),
-                  "text-[13px] border-[#4A70A9] rounded-none"
+                  "text-[13px] border-[#4A70A9] rounded-none",
                 )}
               >
                 Instagram
@@ -72,7 +73,7 @@ export function JobDetailCard({
                 href={"https://www.facebook.com/"}
                 className={cn(
                   buttonVariants({ variant: "outline" }),
-                  "text-[13px] border-[#4A70A9] rounded-none"
+                  "text-[13px] border-[#4A70A9] rounded-none",
                 )}
               >
                 Website

@@ -82,14 +82,14 @@ interface FilterContentProps {
  * - [junior, mid, senior] → min: 0, max: null (infinity)
  */
 function calculateExperienceRange(
-  selectedLevels: ExperienceLevel[]
+  selectedLevels: ExperienceLevel[],
 ): { min: number; max: number | null } | null {
   if (selectedLevels.length === 0) {
     return null; // No experience filter
   }
 
   const ranges = selectedLevels.map(
-    (level) => CONSTANTS.EXPERIENCE_LEVELS[level]
+    (level) => CONSTANTS.EXPERIENCE_LEVELS[level],
   );
 
   const min = Math.min(...ranges.map((r) => r.min));
@@ -108,7 +108,7 @@ function calculateExperienceRange(
  */
 function parseExperienceLevelsFromURL(
   minExp?: string,
-  maxExp?: string
+  maxExp?: string,
 ): ExperienceLevel[] {
   if (!minExp && !maxExp) return [];
 
@@ -148,15 +148,14 @@ function parseExperienceLevelsFromURL(
           selected.push(level);
         }
       }
-    }
+    },
   );
 
   return selected;
 }
 
-// ============================================================================
-// MAIN COMPONENT
-// ============================================================================
+
+
 export default function ExploreJobSearch({ jobs }: JobsProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -201,7 +200,7 @@ export default function ExploreJobSearch({ jobs }: JobsProps) {
     setSelectedExperience((prev) =>
       prev.includes(level)
         ? prev.filter((item) => item !== level)
-        : [...prev, level]
+        : [...prev, level],
     );
   }, []);
 
@@ -264,7 +263,7 @@ export default function ExploreJobSearch({ jobs }: JobsProps) {
         applyFilters();
       }
     },
-    [applyFilters]
+    [applyFilters],
   );
 
   return (
@@ -446,7 +445,7 @@ function FilterContent({
                   years)
                 </Label>
               </div>
-            )
+            ),
           )}
         </div>
       </div>

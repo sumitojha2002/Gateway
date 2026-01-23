@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import fetcher from "@/helper/fetcher";
 import { URLS } from "@/constants";
-
+import ProfileImage from "@/public/user_profile.jpg";
 interface ViewPageProps {
   userId: number | string;
 }
@@ -76,7 +76,7 @@ export async function ViewProfilePage({ userId }: ViewPageProps) {
         <div className="flex justify-between ">
           <div className="grid grid-cols-2 ">
             <Image
-              src={data.profile_pic}
+              src={data.profile_pic ? data.profile_pic : ProfileImage}
               alt="alt"
               width={180}
               height={180}
@@ -114,7 +114,7 @@ export async function ViewProfilePage({ userId }: ViewPageProps) {
                       {data.email}
                     </TableCell>
                     <TableCell className="text-center font-semibold">
-                      +977 {data.phone_no.slice(4)}
+                      +977 {data.phone_no ? data.phone_no.slice(4) : ""}
                     </TableCell>
                     <TableCell className="text-right font-semibold">
                       {data.location}

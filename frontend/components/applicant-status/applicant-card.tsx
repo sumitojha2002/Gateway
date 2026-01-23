@@ -6,6 +6,7 @@ import { Download } from "./button/download";
 import fetcher from "@/helper/fetcher";
 import { URLS } from "@/constants";
 import { Separator } from "../ui/separator";
+import ProfileImage from "@/public/user_profile.jpg";
 
 interface MyJobProps {
   id: string | number;
@@ -43,7 +44,7 @@ export async function ApplicantCard({ id }: MyJobProps) {
             <div className="flex justify-between items-center">
               <div className="grid grid-cols-2 gap-3 items-center">
                 <Image
-                  src={applicant.profile_pic || "/placeholder.png"}
+                  src={applicant.profile_pic || ProfileImage}
                   alt={applicant.user_name}
                   width={100}
                   height={100}

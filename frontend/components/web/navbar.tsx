@@ -22,7 +22,6 @@ export function Navbar() {
     : "/";
 
   console.log(session?.user);
-  // ... (Keep the existing loading state logic) ...
   if (status === "loading") {
     return (
       <div className="drop-shadow-xl w-full filter drop-shadow-black-500/70 bg-white sticky top-0 z-50">
@@ -87,7 +86,7 @@ export function Navbar() {
                 href={link.href}
                 className={cn(
                   buttonVariants({ variant: "ghost" }),
-                  isActive && "text-[#4A70A9]"
+                  isActive && "text-[#4A70A9]",
                 )}
               >
                 {link.label}
@@ -106,7 +105,7 @@ export function Navbar() {
                   href={profilePath}
                   className={cn(
                     buttonVariants({ variant: "ghost" }),
-                    isActive && "text-[#4A70A9]"
+                    isActive && "text-[#4A70A9]",
                   )}
                 >
                   Profile

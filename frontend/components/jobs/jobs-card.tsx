@@ -15,7 +15,7 @@ import { Label } from "@radix-ui/react-label";
 import { Job } from "@/app/(shared-layout)/explore-jobs/page";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-
+import ProfileImage from "@/public/user_profile.jpg";
 interface JobProps {
   job: Job[];
 }
@@ -67,7 +67,7 @@ export function JobsCard({ job }: JobProps) {
             <div className="flex justify-between">
               <div className="flex gap-4">
                 <Image
-                  src={job.company_logo}
+                  src={job.company_logo ? job.company_logo : ProfileImage}
                   width={90}
                   height={90}
                   alt="Volk"
@@ -107,7 +107,7 @@ export function JobsCard({ job }: JobProps) {
               href={`/explore-jobs/${job.id}/view-job`}
               className={cn(
                 "w-full hover:bg-[#4A70A9]! hover:text-white!",
-                buttonVariants({ variant: "outline" })
+                buttonVariants({ variant: "outline" }),
               )}
             >
               View

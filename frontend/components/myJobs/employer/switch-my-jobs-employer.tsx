@@ -10,20 +10,20 @@ export function SwitchMyJobsEmployer() {
   return (
     <div
       className={
-        "md:border md:border-[#4A70A9] rounded-md overflow-hidden md:h-60 grid-cols-4 mb-10 grid md:flex md:flex-col gap-1 md:gap-0"
+        "md:border md:border-[#4A70A9]  overflow-hidden md:h-60 grid-cols-4 mb-10 grid md:flex md:flex-col gap-1 md:gap-0"
       }
     >
       <div className="md:h-30 h-10 ">
         <Link
           href={`/employer/my-jobs/post-jobs`}
           className={cn(
-            "md:w-50 w-25 flex items-center justify-center",
+            "md:w-50 w-25 flex items-center justify-center rounded-none!",
             buttonVariants({
               variant:
                 pathname === `/employer/my-jobs/post-jobs`
                   ? "brand"
                   : "outline",
-            })
+            }),
           )}
           style={{ height: "100%" }}
         >
@@ -34,14 +34,14 @@ export function SwitchMyJobsEmployer() {
         <Link
           href={`/employer/my-jobs/manage`}
           className={cn(
-            "md:w-50 w-25  flex items-center justify-center",
+            "md:w-50 w-25  flex items-center justify-center rounded-none!",
             buttonVariants({
               variant:
                 pathname === `/employer/my-jobs/manage` ||
                 pathname.startsWith(`/employer/my-jobs/manage/`)
                   ? "brand"
                   : "outline",
-            })
+            }),
           )}
           style={{ height: "100%" }}
         >
@@ -52,11 +52,11 @@ export function SwitchMyJobsEmployer() {
         <Link
           href={`/employer/my-jobs/history`}
           className={cn(
-            "md:w-50 w-25  flex items-center justify-center",
+            "md:w-50 w-25  flex items-center justify-center rounded-none!",
             buttonVariants({
               variant:
                 pathname === `/employer/my-jobs/history` ? "brand" : "outline",
-            })
+            }),
           )}
           style={{ height: "100%" }}
         >
@@ -67,14 +67,14 @@ export function SwitchMyJobsEmployer() {
         <Link
           href={`/employer/my-jobs/draft`}
           className={cn(
-            "md:w-50 w-25  flex items-center justify-center",
+            "md:w-50 w-25  flex items-center justify-center rounded-none!",
             buttonVariants({
               variant:
                 pathname === `/employer/my-jobs/draft` ||
                 pathname.startsWith(`/employer/my-jobs/draft/`)
                   ? "brand"
                   : "outline",
-            })
+            }),
           )}
           style={{ height: "100%" }}
         >
