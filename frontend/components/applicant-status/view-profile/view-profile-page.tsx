@@ -23,6 +23,7 @@ import { buttonVariants } from "@/components/ui/button";
 import fetcher from "@/helper/fetcher";
 import { URLS } from "@/constants";
 import ProfileImage from "@/public/user_profile.jpg";
+
 interface ViewPageProps {
   userId: number | string;
 }
@@ -65,6 +66,7 @@ export async function ViewProfilePage({ userId }: ViewPageProps) {
   console.log("Hello", response);
   const { data } = response;
   console.log("education: ", data.experiences);
+
   return (
     <div>
       <div className="flex justify-between mb-10 mt-2">
@@ -76,13 +78,15 @@ export async function ViewProfilePage({ userId }: ViewPageProps) {
         <div className="flex justify-between ">
           <div className="grid grid-cols-2 ">
             <Image
-              src={data.profile_pic ? data.profile_pic : ProfileImage}
+              src={data?.profile_pic || ProfileImage}
               alt="alt"
               width={180}
               height={180}
               className="border border-[#4A70A9] "
             />
-            <h1 className="text-2xl font-semibold ">{data.user_name}</h1>
+            <h1 className="text-2xl font-semibold ">
+              {data?.user_name || "N/A"}
+            </h1>
           </div>
           <div className="grid grid-cols-2 gap-1">
             <MessageButton />
@@ -93,7 +97,9 @@ export async function ViewProfilePage({ userId }: ViewPageProps) {
           <CardContent>
             <div className="mb-10">
               <h1 className="text-2xl font-semibold mb-5">Bio</h1>
-              <p className="whitespace-pre-line">{data.bio}</p>
+              <p className="whitespace-pre-line">
+                {data?.bio || "No bio available"}
+              </p>
             </div>
             <div className="mb-10">
               <Table>
@@ -111,13 +117,13 @@ export async function ViewProfilePage({ userId }: ViewPageProps) {
                   </TableRow>
                   <TableRow className="border-none">
                     <TableCell className="font-semibold">
-                      {data.email}
+                      {data?.email || "N/A"}
                     </TableCell>
                     <TableCell className="text-center font-semibold">
-                      +977 {data.phone_no ? data.phone_no.slice(4) : ""}
+                      {data?.phone_no ? `+977 ${data.phone_no.slice(4)}` : ""}
                     </TableCell>
                     <TableCell className="text-right font-semibold">
-                      {data.location}
+                      {data?.location || "N/A"}
                     </TableCell>
                   </TableRow>
                 </TableHeader>
@@ -138,17 +144,28 @@ export async function ViewProfilePage({ userId }: ViewPageProps) {
                         End Year
                       </TableHead>
                     </TableRow>
-                    {data.education.map((edu) => (
-                      <TableRow className="mb-5">
-                        <TableCell>{edu.institution}</TableCell>
-                        <TableCell className="text-center">
-                          {edu.level}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {edu.end_date}
+                    {data?.education && data.education.length > 0 ? (
+                      data.education.map((edu) => (
+                        <TableRow key={edu.id} className="mb-5">
+                          <TableCell>{edu?.institution || "N/A"}</TableCell>
+                          <TableCell className="text-center">
+                            {edu?.level || "N/A"}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {edu?.end_date || "N/A"}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell
+                          colSpan={3}
+                          className="text-center text-muted-foreground"
+                        >
+                          No education records available
                         </TableCell>
                       </TableRow>
-                    ))}
+                    )}
                   </TableHeader>
                 </Table>
               </div>
@@ -167,28 +184,43 @@ export async function ViewProfilePage({ userId }: ViewPageProps) {
                         End Year
                       </TableHead>
                     </TableRow>
-                    {data.experiences.map((exp) => (
-                      <TableRow className="mb-5">
-                        <TableCell>{exp.work_place}</TableCell>
-                        <TableCell className="text-center">
-                          {exp.role}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {exp.end_date.slice(0, 4)}
+                    {data?.experiences && data.experiences.length > 0 ? (
+                      data.experiences.map((exp) => (
+                        <TableRow key={exp.id} className="mb-5">
+                          <TableCell>{exp?.work_place || "N/A"}</TableCell>
+                          <TableCell className="text-center">
+                            {exp?.role || "N/A"}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {exp?.end_date ? exp.end_date.slice(0, 4) : "N/A"}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell
+                          colSpan={3}
+                          className="text-center text-muted-foreground"
+                        >
+                          No experience records available
                         </TableCell>
                       </TableRow>
-                    ))}
+                    )}
                   </TableHeader>
                 </Table>
               </div>
             </div>
             <div className="mb-10">
               <h1 className="text-2xl font-semibold mb-5">Skills</h1>
-              <div className="grid grid-cols-5">
-                {data.skills.map((skills) => (
-                  <SmallDisplay name={skills.name} />
-                ))}
-              </div>
+              {data?.skills && data.skills.length > 0 ? (
+                <div className="grid grid-cols-5">
+                  {data.skills.map((skills) => (
+                    <SmallDisplay key={skills.id} name={skills.name} />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground">No skills listed</p>
+              )}
             </div>
             <div className="mb-10">
               <h1 className="text-2xl font-semibold mb-5">Social Links</h1>
