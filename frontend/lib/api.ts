@@ -133,8 +133,53 @@ export const api = createApi({
           method: "POST",
           body,
         }),
-      }
+      },
     ),
+
+    acceptJobSeeker: builder.mutation<any, { body: string; id: number }>({
+      query: ({ id, body }) => ({
+        url: URLS.ACCEPT_JOB(id),
+        method: "PATCH",
+        body: { application_status: body },
+      }),
+    }),
+
+    addBookMark: builder.mutation<
+      any,
+      { job_id: number | string; token?: string }
+    >({
+      query: ({ job_id, token }) => ({
+        url: URLS.ADD_BOOKMARK,
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: { "job": job_id },
+      }),
+    }),
+
+    removeBookMark: builder.mutation<
+      any,
+      { id: number | string; token?: string }
+    >({
+      query: ({ id, token }) => ({
+        url: URLS.REMOVE_BOOKMARK(id),
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }),
+    }),
+
+
+    rejectJobSeeker: builder.mutation({
+      query: (id: number) => ({
+        url: URLS.REJECT_JOB(id),
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
@@ -145,6 +190,9 @@ export const {
   useDeleteJobSeekerExperienceMutation,
   useGetEmployerProfileQuery,
   usePatchJobMutation,
+  useAcceptJobSeekerMutation,
+  useAddBookMarkMutation,
+  useRemoveBookMarkMutation,
   useApplyApplicationMutation,
   useUpdateEmployerProfileMutation,
   useUpdateJobMutation,

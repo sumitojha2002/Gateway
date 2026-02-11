@@ -6,10 +6,7 @@ export function LeftNavButton() {
   const router = useRouter();
   return (
     <div>
-      <ArrowLeft
-        onClick={() => router.push("/explore-jobs")}
-        className="cursor-pointer"
-      />
+      <ArrowLeft onClick={() => router.back()} className="cursor-pointer" />
     </div>
   );
 }

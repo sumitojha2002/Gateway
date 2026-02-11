@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react"; // Need to import React explicitly for useState
+import React, { useState } from "react";
 import Link from "next/link";
-import { MenuIcon } from "lucide-react";
+import { Bell, MenuIcon, MessageCircle } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
@@ -28,15 +28,18 @@ interface MobileNavProps {
 export function MobileNav({ navLinks }: MobileNavProps) {
   const { data: session, status } = useSession();
   const pathname = usePathname();
-  // State to control if the mobile menu is open
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const userRole = session?.user?.role;
+  const isAuthenticated = status === "authenticated";
+
+  const isActivePath = (path: string) => pathname === path;
+  const closeMenu = () => setIsOpen(false);
 
   return (
-    // This wrapper is only visible on small screens (hidden md:hidden)
     <div className="md:hidden">
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          {/* Hamburger Icon Button */}
           <Button variant="ghost" size="icon" aria-label="Toggle Menu">
             <MenuIcon className="h-6 w-6 text-black" />
           </Button>
@@ -49,54 +52,87 @@ export function MobileNav({ navLinks }: MobileNavProps) {
             </SheetTitle>
           </SheetHeader>
 
-          <div className="flex flex-col space-y-2 pt-3">
-            {/* Mobile Navigation Links */}
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    buttonVariants({ variant: "ghost" }),
-                    "w-full justify-start text-lg",
-                    isActive && "text-[#4A70A9] font-bold"
-                  )}
-                  onClick={() => setIsOpen(false)} // Close menu on link click
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
+          <nav className="flex flex-col space-y-2 pt-3">
+            {/* Main Navigation Links */}
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  buttonVariants({ variant: "ghost" }),
+                  "w-full justify-start text-lg pointer-events-auto cursor-pointer",
+                  isActivePath(link.href) && "text-[#4A70A9] font-bold",
+                )}
+                onClick={closeMenu}
+              >
+                {link.label}
+              </Link>
+            ))}
 
-            {/* Authentication/Profile Button */}
-            {status === "authenticated" ? (
-              (() => {
-                const profilePath = `/${session?.user?.role}/profile`;
-                const isActive = pathname === profilePath;
-                return (
-                  <Link
-                    href={profilePath}
-                    className={cn(
-                      buttonVariants({ variant: "ghost" }),
-                      "w-full justify-start text-lg",
-                      isActive && "text-[#4A70A9] font-bold"
-                    )}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Profile
-                  </Link>
-                );
-              })()
-            ) : (
+            {/* Profile Link */}
+            {isAuthenticated && userRole && (
+              <Link
+                href={`/${userRole}/profile`}
+                className={cn(
+                  buttonVariants({ variant: "ghost" }),
+                  "w-full justify-start text-lg pointer-events-auto cursor-pointer",
+                  isActivePath(`/${userRole}/profile`) &&
+                    "text-[#4A70A9] font-bold",
+                )}
+                onClick={closeMenu}
+              >
+                Profile
+              </Link>
+            )}
+
+            {/* Login Button */}
+            {!isAuthenticated && (
               <Link
                 href="/login"
-                className={buttonVariants({ variant: "brand" })}
+                className={cn(
+                  buttonVariants({ variant: "brand" }),
+                  "w-full pointer-events-auto cursor-pointer",
+                )}
+                onClick={closeMenu}
               >
                 LOGIN
               </Link>
             )}
-          </div>
+
+            {/* Chat Link */}
+            {isAuthenticated && userRole && (
+              <Link
+                href={`/${userRole}/chat`}
+                className={cn(
+                  buttonVariants({ variant: "ghost" }),
+                  "w-full justify-start text-lg pointer-events-auto cursor-pointer",
+                  isActivePath(`/${userRole}/chat`) &&
+                    "text-[#4A70A9] font-bold",
+                )}
+                onClick={closeMenu}
+              >
+                <MessageCircle size={18} className="mr-2" />
+                Chat
+              </Link>
+            )}
+
+            {/* Notification Link */}
+            {isAuthenticated && userRole && (
+              <Link
+                href={`/${userRole}/notification`}
+                className={cn(
+                  buttonVariants({ variant: "ghost" }),
+                  "w-full justify-start text-lg pointer-events-auto cursor-pointer!",
+                  isActivePath(`/${userRole}/notification`) &&
+                    "text-[#4A70A9] font-bold",
+                )}
+                onClick={closeMenu}
+              >
+                <Bell size={18} className="mr-2" />
+                Notifications
+              </Link>
+            )}
+          </nav>
         </SheetContent>
       </Sheet>
     </div>

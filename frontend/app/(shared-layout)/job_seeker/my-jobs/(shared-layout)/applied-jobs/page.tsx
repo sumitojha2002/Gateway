@@ -1,7 +1,11 @@
-import React from "react";
+import { AppliedJobs } from "@/components/myJobs/jobseeker/my-jobs/applied-jobs";
 
-function page() {
-  return <div>Hello from applied jobs</div>;
+async function page() {
+  return (
+    <div>
+      <AppliedJobs />
+    </div>
+  );
 }
 
 export default page;

@@ -35,6 +35,11 @@ export const URLS = {
   DELETE_JOB: (id: number | string) => `${API_BASE_URL}/job/job-access/${id}/`,
   //draft-list
   DRAFT_JOBS: `${API_BASE_URL}/job/job-draft-list/`,
+  //bookmark job
+  ADD_BOOKMARK: `${API_BASE_URL}/job/job-bookmark/`,
+  //remove bookmark job
+  REMOVE_BOOKMARK: (id: number | string) =>
+    `${API_BASE_URL}/job/job-bookmark-delete/${id}/`,
   //job-applicants-list
   APPLY_APP: (job_id: number | string) =>
     `${API_BASE_URL}/job/job-application-create/${job_id}/`,
@@ -44,6 +49,14 @@ export const URLS = {
   //get user from id
   GET_JS_FROM_ID: (id: number) =>
     `${API_BASE_URL}/job/job-application-detail/${id}/`,
+  GET_APP_LIST: `${API_BASE_URL}/job/my-job-application-list/`,
+  GET_JOB_BOOKMARK_LIST: `${API_BASE_URL}/job/job-bookmark-list/`,
+  //accpet job
+  ACCEPT_JOB: (id: number) =>
+    `${API_BASE_URL}/job/job-application-status-update/${id}/`,
+  //Reject job
+  REJECT_JOB: (id: number) =>
+    `${API_BASE_URL}/job/job-application-status-update/${id}/`,
 };
 
 export const ROLES = {

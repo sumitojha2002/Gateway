@@ -1,9 +1,10 @@
 .jobCardTitle {
-  font-size: 16px;
+  font-size: 13px;
 }
 
 .jobCardRole {
   font-size: 18px;
+  font-weight: bold;
 }
 
 .jobType {

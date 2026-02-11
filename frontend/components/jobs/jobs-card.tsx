@@ -8,14 +8,13 @@ import {
 } from "@/components/ui/card";
 import { Button, buttonVariants } from "../ui/button";
 import styles from "../jobs/jobs-card.module.css";
-import Volkwagon from "../../public/volkswagen.jpg";
 import Image from "next/image";
-import { Heart } from "lucide-react";
 import { Label } from "@radix-ui/react-label";
 import { Job } from "@/app/(shared-layout)/explore-jobs/page";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import ProfileImage from "@/public/user_profile.jpg";
+import { BookMarkHeart } from "./JobDetail/bookmark/bookmark-heart";
 interface JobProps {
   job: Job[];
 }
@@ -28,12 +27,10 @@ const formatSalary = (salaryRange?: string) => {
 
   try {
     const parsed = JSON.parse(salaryRange);
-    const lower = parsed.lower
-      ? `Rs. ${Number(parsed.lower).toLocaleString("en-IN")}`
-      : "";
-    const upper = parsed.upper
-      ? `Rs. ${Number(parsed.upper).toLocaleString("en-IN")}`
-      : "";
+    const lower =
+      parsed.lower ? `Rs. ${Number(parsed.lower).toLocaleString("en-IN")}` : "";
+    const upper =
+      parsed.upper ? `Rs. ${Number(parsed.upper).toLocaleString("en-IN")}` : "";
 
     if (lower && upper) return `${lower} - ${upper}`;
     if (lower) return lower;
@@ -59,6 +56,7 @@ export function JobsCard({ job }: JobProps) {
     { label: "Hybrid", value: "hybrid" },
   ];
 
+  console.log(job.company_logo_url);
   return (
     <div className=" grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 ">
       {job.map((job) => (
@@ -67,14 +65,18 @@ export function JobsCard({ job }: JobProps) {
             <div className="flex justify-between">
               <div className="flex gap-4">
                 <Image
-                  src={job.company_logo ? job.company_logo : ProfileImage}
+                  src={
+                    job.company_logo_url ? job.company_logo_url : ProfileImage
+                  }
                   width={90}
                   height={90}
                   alt="Volk"
                   className="rounded-md object-contain"
                 />
                 <div className="flex-col">
-                  <CardTitle className={styles.jobCardTitle}></CardTitle>
+                  <CardTitle className={styles.jobCardTitle}>
+                    {job.company_name}
+                  </CardTitle>
                   <h1 className={styles.jobCardRole}>{job.title}</h1>
                   <CardDescription>
                     {job.location == "string" ? "" : job.location}
@@ -82,7 +84,11 @@ export function JobsCard({ job }: JobProps) {
                 </div>
               </div>
 
-              <Heart className={styles.jobFavIcon} />
+              <BookMarkHeart
+                job_id={job.id}
+                bookmarked={job.is_bookmarked}
+                bookmarkId={job.bookmark_id}
+              />
             </div>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">

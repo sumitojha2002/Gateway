@@ -13,6 +13,7 @@ interface JobPageProps {
   bio: string;
   companyName: string;
   email: string;
+
 }
 
 export function JobDetailCard({
@@ -21,6 +22,7 @@ export function JobDetailCard({
   bio,
   companyName,
   email,
+  
 }: JobPageProps) {
   return (
     <div className="mb-20">

@@ -2,19 +2,23 @@ import { Suspense } from "react";
 import ExploreJobSearch from "@/components/jobs/explore-jobs";
 import { JobsCard } from "@/components/jobs/jobs-card";
 import { URLS } from "@/constants";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 interface ExplorePageProps {
   searchParams?: Record<string, string | undefined>;
 }
 
 export interface Job {
-  id: string;
+  is_bookmarked: string;
+  bookmark_id: number;
+  id: string | number;
   title: string;
   company?: string;
   location?: string;
   job_type?: string;
   work_mode?: string;
-  company_log: string;
+  company_logo_url: string;
   min_exp?: string;
   max_exp?: string;
   experience_level: string;
@@ -48,6 +52,8 @@ async function JobsDataFetcher({
 }: {
   params: Record<string, string | undefined>;
 }) {
+  const session = await getServerSession(authOptions);
+  const token = session?.user?.accessToken;
   const queryObj: Record<string, string> = {};
 
   if (params.job_type) queryObj.job_type = params.job_type;
@@ -57,18 +63,24 @@ async function JobsDataFetcher({
   if (params.min_exp) queryObj.min_exp = params.min_exp;
   if (params.max_exp) queryObj.max_exp = params.max_exp;
 
-  const queryString = Object.keys(queryObj).length
-    ? `?${new URLSearchParams(queryObj).toString()}`
+  const queryString =
+    Object.keys(queryObj).length ?
+      `?${new URLSearchParams(queryObj).toString()}`
     : "";
 
   try {
     const res = await fetch(`${URLS.GET_JOB_LIST}${queryString}`, {
       cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Bearer ${token}` : "",
+      },
     });
     if (!res.ok) {
       throw new Error("Failed to fetch jobs");
     }
     const result: JobsResponse = await res.json();
+    console.log("result: ", result);
     return <ExploreJobSearch jobs={result.data} />;
   } catch (error) {
     return <ExploreJobSearch jobs={[]} />;

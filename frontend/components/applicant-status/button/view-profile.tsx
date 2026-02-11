@@ -14,7 +14,7 @@ export async function ViewProfile({ userId, jobId }: ApplicantProps) {
         href={`/employer/my-jobs/manage/${jobId}/applicant-status/${userId}/view-profile`}
         className={cn(
           buttonVariants({ variant: "outline" }),
-          "border-[#4A70A9] rounded-none",
+          "border-[#4A70A9] rounded-none w-full!",
         )}
       >
         View Profile

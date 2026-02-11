@@ -7,13 +7,21 @@ import {
 } from "@/components/ui/card";
 import { Heart } from "lucide-react";
 import { useMemo } from "react";
+import { BookMarkHeart } from "./bookmark/bookmark-heart";
 
 interface JobPageProps {
   expireDate: string;
   title: string;
+  job_id: string | number;
+  bookmarked: string;
 }
 
-export function JobTitle({ expireDate, title }: JobPageProps) {
+export function JobTitle({
+  expireDate,
+  title,
+  job_id,
+  bookmarked,
+}: JobPageProps) {
   const convertDate = (): string => {
     if (!expireDate) return "";
     return new Date(expireDate).toISOString().split("T")[0]; // 2026-01-21
@@ -30,7 +38,7 @@ export function JobTitle({ expireDate, title }: JobPageProps) {
             Apply before: {convertDate()}
           </div>
           <CardAction>
-            <Heart />
+            <BookMarkHeart job_id={job_id} bookmarked={bookmarked} />
           </CardAction>
         </CardHeader>
       </Card>

@@ -5,6 +5,9 @@ import { JobDetailCard } from "./job-detail-card";
 import { LeftNavButton } from "./button/left-nav";
 import fetcher from "@/helper/fetcher";
 import { URLS } from "@/constants";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+
 
 interface JobPageProps {
   jobId: number | string;
@@ -17,6 +20,7 @@ interface Skills {
 
 interface ResponseData {
   data: {
+    is_bookmarked: string;
     id: number | string;
     title: string;
     email: string;
@@ -37,9 +41,17 @@ interface ResponseData {
 }
 
 export async function JobDetail({ jobId }: JobPageProps) {
-  const res = await fetcher<ResponseData>(URLS.GET_JOB_BY_ID(jobId));
+  const session = await getServerSession(authOptions);
+  const token = session?.user.accessToken;
+  const res = await fetcher<ResponseData>(URLS.GET_JOB_BY_ID(jobId), {
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+  });
   const { data } = res;
-
+  console.log(data);
   return (
     <div className="flex gap-5 flex-col md:flex-row">
       <div className="md:w-3/4 mt-10 mb-10 flex flex-col">
@@ -47,7 +59,12 @@ export async function JobDetail({ jobId }: JobPageProps) {
           <LeftNavButton />
         </div>
         <div>
-          <JobTitle title={data.title} expireDate={data.expires_at} />
+          <JobTitle
+            title={data.title}
+            expireDate={data.expires_at}
+            job_id={data.id}
+            bookmarked={data.is_bookmarked}
+          />
         </div>
         <div className="mt-10">
           <JobSummary

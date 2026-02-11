@@ -78,20 +78,21 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
 
   const [edit, setEdit] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(
-    user.profile_pic || null,
+    user.profile_pic_url || null,
   );
   const [resumeFileName, setResumeFileName] = useState<string | null>(null);
   const resumeInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const parsedYears = user.years_of_experience
-    ? (() => {
+  const parsedYears =
+    user.years_of_experience ?
+      (() => {
         if (typeof user.years_of_experience === "object") {
           return {
             lower: Number(user.years_of_experience.lower),
             upper:
-              user.years_of_experience.upper != null
-                ? Number(user.years_of_experience.upper)
-                : null,
+              user.years_of_experience.upper != null ?
+                Number(user.years_of_experience.upper)
+              : null,
           };
         }
         try {
@@ -151,8 +152,8 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
       },
       linkedin_url: user.linkedin_url || "",
       portfolio_url: user.portfolio_url || "",
-      resume: user.cv || "",
-      profile: user.profile_pic || "",
+      resume: user.cv_url || "",
+      profile: user.profile_pic_url || "",
     },
   });
   const [originalValues, setOriginalValues] =
@@ -214,94 +215,119 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
 
   async function handleSaveChanges() {
     console.log("handleSaveChanges called!");
-    console.log("Form values:", form.getValues());
-    console.log("original", originalValues);
+
     if (!originalValues) return;
 
     const updatedValues = form.getValues();
     const formData = new FormData();
 
-    formData.append("username", updatedValues.username ?? "");
-    formData.append("contact", updatedValues.phone ?? "");
-    formData.append("dob", updatedValues.dob ?? "");
-    formData.append("location", updatedValues.location ?? "");
-    formData.append("bio", updatedValues.bio ?? "");
+    // Helper function to check if value changed
+    const hasChanged = (field: keyof ProfileInfoFormValues) => {
+      return (
+        JSON.stringify(originalValues[field]) !==
+        JSON.stringify(updatedValues[field])
+      );
+    };
 
+    // ALWAYS send required fields (even if unchanged)
     const lower = updatedValues.years_of_experience.lower;
     const upper = updatedValues.years_of_experience.upper;
+    const yearsPayload = [lower, upper === undefined ? null : upper];
+    formData.append("years_of_experience", JSON.stringify(yearsPayload));
 
-    // This is the fix - explicitly use null instead of undefined
-    const yearsPayload = [
-      lower,
-      upper === undefined ? null : upper, // <-- This converts undefined to null
-    ];
+    // Only append changed optional fields
+    if (hasChanged("username")) {
+      formData.append("username", updatedValues.username ?? "");
+    }
 
-    console.log("Years payload (before stringify):", yearsPayload);
-    // Should log: [5, null] NOT [5, undefined]
+    if (hasChanged("phone")) {
+      formData.append("contact", updatedValues.phone ?? "");
+    }
 
-    const stringified = JSON.stringify(yearsPayload);
-    console.log("Years payload (after stringify):", stringified);
-    // Should log: "[5,null]" NOT "[5]"
+    if (hasChanged("dob")) {
+      formData.append("dob", updatedValues.dob ?? "");
+    }
 
-    formData.append("years_of_experience", stringified);
-    formData.append("linkedin_url", updatedValues.linkedin_url ?? "");
-    formData.append("portfolio_url", updatedValues.portfolio_url ?? "");
+    if (hasChanged("location")) {
+      formData.append("location", updatedValues.location ?? "");
+    }
 
-    //Profile pic
+    if (hasChanged("bio")) {
+      formData.append("bio", updatedValues.bio ?? "");
+    }
+
+    if (hasChanged("linkedin_url")) {
+      formData.append("linkedin_url", updatedValues.linkedin_url ?? "");
+    }
+
+    if (hasChanged("portfolio_url")) {
+      formData.append("portfolio_url", updatedValues.portfolio_url ?? "");
+    }
+
+    // Profile picture - ONLY if new file uploaded (File object, not URL string)
     if (updatedValues.profile instanceof File) {
       formData.append("profile_pic", updatedValues.profile);
     }
+    // Don't send anything if it's still the old URL
 
-    //Resume
-    const resume = updatedValues.resume;
+    // Resume - ONLY if new file uploaded (File object, not URL string)
+    if (updatedValues.resume instanceof File) {
+      formData.append("cv", updatedValues.resume);
+    }
+    // Don't send anything if it's still the old URL
 
-    if (resume instanceof File) {
-      formData.append("cv", resume);
-    } else if (user.cv) {
-      // IMPORTANT: backend requires cv, so tell it to keep old one
-      formData.append("cv", user.cv);
+    // Skills - only if changed
+    if (hasChanged("skills")) {
+      const originalSkillNames = (originalValues.skills ?? []).map(
+        (s: Skill) => s.name,
+      );
+      const currentSkillNames = (updatedValues.skills ?? []).map(
+        (s: Skill) => s.name,
+      );
+
+      const skillsPayload = {
+        add: currentSkillNames.filter(
+          (name) => !originalSkillNames.includes(name),
+        ),
+        remove: originalSkillNames.filter(
+          (name) => !currentSkillNames.includes(name),
+        ),
+      };
+
+      if (skillsPayload.add.length > 0 || skillsPayload.remove.length > 0) {
+        formData.append("skills", JSON.stringify(skillsPayload));
+      }
     }
 
-    //Skills
-    const originalSkillNames = (originalValues.skills ?? []).map(
-      (s: Skill) => s.name,
-    );
-    const currentSkillNames = (updatedValues.skills ?? []).map(
-      (s: Skill) => s.name,
-    );
+    // Experiences - only if changed
+    if (hasChanged("experiences")) {
+      formData.append(
+        "experiences_data",
+        JSON.stringify(updatedValues.experiences) ?? [],
+      );
+    }
 
-    const skillsPayload = {
-      add: currentSkillNames,
-      remove: originalSkillNames.filter(
-        (name) => !currentSkillNames.includes(name),
-      ),
-    };
-    formData.append("skills", JSON.stringify(skillsPayload));
+    // Education - only if changed
+    if (hasChanged("education")) {
+      formData.append(
+        "education_data",
+        JSON.stringify(updatedValues.education) ?? [],
+      );
+    }
 
-    //Experiences
-
-    formData.append(
-      "experiences_data",
-      JSON.stringify(updatedValues.experiences) ?? [],
-    );
-
-    //education
-    formData.append(
-      "education_data",
-      JSON.stringify(updatedValues.education) ?? [],
-    );
+    // Check if form is dirty before submitting
+    if (!form.formState.isDirty) {
+      alert("No changes detected");
+      return;
+    }
 
     try {
       const result = await updateProfile(formData).unwrap();
       console.log("Profile updated:", result);
 
-      //update baseline after success
       setOriginalValues({
         ...updatedValues,
-        skills:
-          updatedValues.skills?.map((s: Skill) => ({
-            ...s,
-          })) ?? [],
+        skills: updatedValues.skills?.map((s: Skill) => ({ ...s })) ?? [],
       });
       setEdit(false);
       alert("Profile updated successfully!");
@@ -309,13 +335,11 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
     } catch (err: any) {
       console.error("Failed to update profile:", err);
 
-      // --- unwrap nested backend errors ---
       const backendErrors = err?.data?.data || err?.error?.data?.data || {};
       if (backendErrors && typeof backendErrors === "object") {
         Object.entries(backendErrors).forEach(([field, messages]) => {
-          const message = Array.isArray(messages)
-            ? messages[0]
-            : String(messages);
+          const message =
+            Array.isArray(messages) ? messages[0] : String(messages);
           form.setError(field as keyof ProfileInfoFormValues, {
             type: "server",
             message,
@@ -323,7 +347,6 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
         });
       }
 
-      // Optional: general alert for unknown errors
       if (!Object.keys(backendErrors).length) {
         alert(
           err?.data?.message ||
@@ -495,7 +518,7 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
             <h1 className="text-3xl font-bold">Edit Profile</h1>
           </div>
           <div>
-            {edit ? (
+            {edit ?
               <div>
                 <Button
                   type="submit"
@@ -520,11 +543,10 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
                   Cancel
                 </Button>
               </div>
-            ) : (
-              <Button variant={"link"} onClick={() => setEdit(true)}>
+            : <Button variant={"link"} onClick={() => setEdit(true)}>
                 Edit
               </Button>
-            )}
+            }
           </div>
         </div>
         <Card className="w-full">
@@ -803,9 +825,9 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
                                   disabled={!edit}
                                   className={`w-full border rounded-md px-2 py-1 
                                   ${
-                                    !edit
-                                      ? "bg-white text-[#838383] "
-                                      : "bg-white text-black"
+                                    !edit ?
+                                      "bg-white text-[#838383] "
+                                    : "bg-white text-black"
                                   }
                                   `}
                                 >
@@ -1276,11 +1298,11 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
                 >
                   Upload Resume
                 </Button>
-                {(resumeFileName || user.cv) && (
+                {(resumeFileName || user.cv_url) && (
                   <p className="mt-2 text-sm text-gray-600">
                     Resume:{" "}
                     <a
-                      href={user.cv} // or URL.createObjectURL(file) if uploaded
+                      href={user.cv_url} // or URL.createObjectURL(file) if uploaded
                       download // <- triggers download
                       target="_blank"
                       rel="noopener noreferrer"

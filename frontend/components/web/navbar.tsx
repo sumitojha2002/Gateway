@@ -7,6 +7,7 @@ import { lilitaOne } from "@/app/ui/fonts";
 import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { MobileNav } from "./mobile-nav";
+import { Bell, MessageCircle } from "lucide-react";
 
 export function Navbar() {
   const { data: session, status } = useSession();
@@ -17,9 +18,8 @@ export function Navbar() {
     employer: "/employer/my-jobs/post-jobs",
   } as const;
 
-  const myJobsHref = session?.user?.role
-    ? MY_JOBS_ROUTE_MAP[session.user.role]
-    : "/";
+  const myJobsHref =
+    session?.user?.role ? MY_JOBS_ROUTE_MAP[session.user.role] : "/";
 
   console.log(session?.user);
   if (status === "loading") {
@@ -57,10 +57,10 @@ export function Navbar() {
   const linksToRender =
     status === "authenticated" ? authenticatedLinks : publicLinks;
 
+  const userRole = session?.user?.role;
+
   return (
     <div className="drop-shadow-xl w-full filter drop-shadow-black-500/70 bg-white sticky top-0 z-50">
-      {" "}
-      {/* Added sticky/z-index */}
       <nav className="bg-[#FFFFFF] max-w-7xl mx-auto px-4 md:px-6 lg:px-8 w-full py-5 flex items-center justify-between">
         <div className="flex items-center gap-8">
           <Link href="/">
@@ -94,30 +94,57 @@ export function Navbar() {
             );
           })}
 
-          {status === "authenticated" ? (
-            (() => {
-              const profilePath = `/${session?.user?.role}/profile`;
-              const isActive =
-                pathname === profilePath ||
-                pathname.startsWith(`/${session?.user?.role}/security`);
-              return (
-                <Link
-                  href={profilePath}
-                  className={cn(
-                    buttonVariants({ variant: "ghost" }),
-                    isActive && "text-[#4A70A9]",
-                  )}
-                >
-                  Profile
-                </Link>
-              );
-            })()
-          ) : (
+          {/* Profile Link */}
+          {status === "authenticated" && userRole && (
+            <Link
+              href={`/${userRole}/profile`}
+              className={cn(
+                buttonVariants({ variant: "ghost" }),
+                (pathname === `/${userRole}/profile` ||
+                  pathname.startsWith(`/${userRole}/security`)) &&
+                  "text-[#4A70A9]",
+              )}
+            >
+              Profile
+            </Link>
+          )}
+
+          {/* Login Button */}
+          {status !== "authenticated" && (
             <Link
               href="/login"
               className={buttonVariants({ variant: "brand" })}
             >
               LOGIN
+            </Link>
+          )}
+
+          {/* Chat Icon */}
+          {status === "authenticated" && userRole && (
+            <Link
+              href={`/${userRole}/chat`}
+              className={cn(
+                "p-2 hover:bg-gray-100 rounded-md transition-colors cursor-pointer",
+                pathname.startsWith(`/${userRole}/chat`) && "text-[#4A70A9]",
+              )}
+              aria-label="Chat"
+            >
+              <MessageCircle size={20} />
+            </Link>
+          )}
+
+          {/* Notification Icon */}
+          {status === "authenticated" && userRole && (
+            <Link
+              href={`/${userRole}/notification`}
+              className={cn(
+                "p-2 hover:bg-gray-100 rounded-md transition-colors cursor-pointer",
+                pathname.startsWith(`/${userRole}/notification`) &&
+                  "text-[#4A70A9]",
+              )}
+              aria-label="Notifications"
+            >
+              <Bell size={20} />
             </Link>
           )}
         </div>

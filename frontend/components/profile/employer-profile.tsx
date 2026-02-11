@@ -25,10 +25,11 @@ interface EmployerProfileProps {
 function EmployerProfile({ user }: EmployerProfileProps) {
   const router = useRouter();
   //RTK query:
+  console.log(user.company_logo_url);
   const [updateEmployer, { isLoading }] = useUpdateEmployerProfileMutation();
   const [edit, setEdit] = useState(false);
   const [companyImage, setCompanyImage] = useState<string | null>(
-    user.company_logo || null
+    user.company_logo_url || null,
   );
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -38,7 +39,7 @@ function EmployerProfile({ user }: EmployerProfileProps) {
     defaultValues: {
       company_name: user.company_name || "",
       email: user.email || "",
-      company_logo: user.company_logo || "",
+      company_logo: user.company_logo_url || "",
       location: user.location || "",
       facebook_url: user.facebook_url || "",
       linkedin_url: user.linkedin_url || "",
@@ -55,7 +56,7 @@ function EmployerProfile({ user }: EmployerProfileProps) {
     const initialValues: EmployerProfileFormValues = {
       company_name: user.company_name || "",
       email: user.email || "",
-      company_logo: user.company_logo || "",
+      company_logo: user.company_logo_url || "",
       location: user.location || "",
       facebook_url: user.facebook_url || "",
       linkedin_url: user.linkedin_url || "",
@@ -112,9 +113,8 @@ function EmployerProfile({ user }: EmployerProfileProps) {
       // Field-level errors
       if (backendErrors && typeof backendErrors === "object") {
         Object.entries(backendErrors).forEach(([field, messages]) => {
-          const message = Array.isArray(messages)
-            ? messages[0]
-            : String(messages);
+          const message =
+            Array.isArray(messages) ? messages[0] : String(messages);
 
           form.setError(field as keyof EmployerProfileFormValues, {
             type: "server",
@@ -138,7 +138,7 @@ function EmployerProfile({ user }: EmployerProfileProps) {
             <h1 className="text-3xl font-bold">Edit Profile</h1>
           </div>
           <div>
-            {edit ? (
+            {edit ?
               <div>
                 <Button
                   variant="link"
@@ -163,11 +163,10 @@ function EmployerProfile({ user }: EmployerProfileProps) {
                   Cancel
                 </Button>
               </div>
-            ) : (
-              <Button variant={"link"} onClick={() => setEdit(true)}>
+            : <Button variant={"link"} onClick={() => setEdit(true)}>
                 Edit
               </Button>
-            )}
+            }
           </div>
         </div>
         <Card className="w-full">
