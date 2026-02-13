@@ -22,7 +22,7 @@ export function JobDeleteButton({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [deleteJob, { isLoading }] = useDeleteJobMutation();
-  console.log(id);
+  //console.log(id);
   const handleDelete = async () => {
     try {
       await deleteJob(id).unwrap();

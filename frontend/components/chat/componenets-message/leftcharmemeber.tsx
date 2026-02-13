@@ -6,7 +6,7 @@ import { ChatList } from "./client-list";
 export async function LeftChatMemeber() {
   const res = await getChats();
   const chats = res.data || [];
-  console.log(chats);
+  //console.log(chats);
 
   return (
     <div className="h-full">

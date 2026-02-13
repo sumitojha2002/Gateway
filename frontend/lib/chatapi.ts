@@ -174,12 +174,12 @@ const { results: messages } = await getChatMessages(chatId);
 const ws = createChatWebSocket(chatId);
 
 ws.onopen = () => {
-  console.log('Connected to chat');
+  //console.log('Connected to chat');
 };
 
 ws.onmessage = (event) => {
   const message = JSON.parse(event.data);
-  console.log('New message:', message);
+  //console.log('New message:', message);
 };
 
 ws.send(JSON.stringify({

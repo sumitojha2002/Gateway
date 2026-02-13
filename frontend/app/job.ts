@@ -1,4 +1,5 @@
 export interface Job {
+  status: string;
   is_bookmarked: string | boolean;
   bookmark_id: number;
   id: string | number;

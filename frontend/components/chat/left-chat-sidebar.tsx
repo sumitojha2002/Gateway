@@ -32,7 +32,7 @@ export function LeftChatSidebar({
       item.job_title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  console.log(filteredChats);
+  //console.log(filteredChats);
 
   return (
     <div className="h-full flex flex-col">

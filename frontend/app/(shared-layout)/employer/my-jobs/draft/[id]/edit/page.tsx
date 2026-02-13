@@ -29,7 +29,7 @@ async function page({ params }: PageProps) {
   const { id } = await params;
   const userById = await fetcher<User>(URLS.GET_JOB_BY_ID(id));
   const user = userById.data;
-  console.log("user:", user);
+  //console.log("user:", user);
   const message = userById.message;
   const status = userById.status;
   const skills = await fetcher<Skills>(URLS.JS_SKILLS);

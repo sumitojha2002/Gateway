@@ -65,7 +65,7 @@ interface UserData {
 
 export async function ViewProfilePage({ userId }: ViewPageProps) {
   const response = await fetcher<UserData>(URLS.GET_JS_FROM_ID(Number(userId)));
-  console.log("Hello", response);
+  //console.log("Hello", response);
   const { data } = response;
 
   return (

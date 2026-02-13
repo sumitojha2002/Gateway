@@ -51,6 +51,7 @@ export function JobsCard({
   job_type,
   experience_level,
   salary_range,
+  status,
 }: Job) {
   const jobTypes = [
     { label: "Intern", value: "intern" },

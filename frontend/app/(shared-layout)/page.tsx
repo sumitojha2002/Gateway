@@ -3,6 +3,7 @@ import HomeImage from "../../public/NA_October_10.jpg";
 import JobSearchFilter from "@/components/feature-name/job-search-filter";
 import TopJobs from "@/components/jobs/top-jobs";
 import RecommendedJobs from "@/components/jobs/top-jobs";
+import { RecentJobs } from "@/components/jobs/recent-jobs";
 
 export default function Home() {
   return (
@@ -13,6 +14,9 @@ export default function Home() {
       </div>
       <div className="mt-5  sm:mt-10 ">
         <RecommendedJobs />
+      </div>
+      <div className="mt-5  sm:mt-10 ">
+        <RecentJobs />
       </div>
     </div>
   );

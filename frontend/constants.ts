@@ -98,6 +98,8 @@ export const URLS = {
   REQ_PASSWORD_RESET_OTP: `${API_BASE_URL}/account/password-reset-request/`,
 
   SEND_PASSWORD_RESET_OPT: `${API_BASE_URL}/account/password-reset-otp-verify/`,
+
+  GET_HISTORY_JOBS: `${API_BASE_URL}/job/employer-job-history/`,
 };
 
 export const ROLES = {

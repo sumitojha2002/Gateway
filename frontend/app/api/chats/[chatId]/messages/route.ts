@@ -16,8 +16,8 @@ export async function GET(
 
     // DEBUG: See exactly what URL is being called
     const url = URLS.GET_CHAT_MESSAGES(chatId);
-    console.log("🔍 chatId:", chatId);
-    console.log("🔍 Calling Django URL:", url);
+    //console.log("🔍 chatId:", chatId);
+    //console.log("🔍 Calling Django URL:", url);
 
     const response = await fetch(url, {
       headers: {
@@ -26,11 +26,11 @@ export async function GET(
       },
     });
 
-    console.log("🔍 Django response status:", response.status);
+    //console.log("🔍 Django response status:", response.status);
 
     if (!response.ok) {
       const errorBody = await response.text();
-      console.log("🔍 Django error body:", errorBody);
+      //console.log("🔍 Django error body:", errorBody);
       return NextResponse.json(
         { error: `Error: ${response.status}`, url, body: errorBody },
         { status: response.status },
@@ -38,7 +38,7 @@ export async function GET(
     }
 
     const data = await response.json();
-    console.log("✅ Messages from Django:", data);
+    //console.log("✅ Messages from Django:", data);
 
     return NextResponse.json(data);
   } catch (error) {

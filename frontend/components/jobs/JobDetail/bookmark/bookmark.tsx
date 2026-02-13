@@ -71,7 +71,7 @@ export async function Bookmark() {
       },
     );
 
-    console.log("BOOKMARKED", res);
+    //console.log("BOOKMARKED", res);
 
     const jobs = res?.data || [];
 
@@ -102,19 +102,22 @@ export async function Bookmark() {
         {transformedJobs.length > 0 ?
           <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 ">
             {transformedJobs.map((item, _) => (
-              <JobsCard
-                id={item.id}
-                company_logo_url={item.company_logo_url}
-                company_name={item.company_name}
-                title={item.title}
-                location={item.location}
-                is_bookmarked={item.is_bookmarked}
-                bookmark_id={item.bookmark_id}
-                work_mode={item.work_mode}
-                job_type={item.job_type}
-                experience_level={item.experience_level}
-                salary_range={item.salary_range}
-              />
+              <div key={item.id}>
+                <JobsCard
+                  status={item.status}
+                  id={item.id}
+                  company_logo_url={item.company_logo_url}
+                  company_name={item.company_name}
+                  title={item.title}
+                  location={item.location}
+                  is_bookmarked={item.is_bookmarked}
+                  bookmark_id={item.bookmark_id}
+                  work_mode={item.work_mode}
+                  job_type={item.job_type}
+                  experience_level={item.experience_level}
+                  salary_range={item.salary_range}
+                />
+              </div>
             ))}
           </div>
         : <div className="text-center py-10">

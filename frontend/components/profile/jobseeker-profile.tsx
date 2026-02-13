@@ -97,8 +97,8 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
         }
         try {
           const p = JSON.parse(user.years_of_experience);
-          console.log("lower: ", p.lower);
-          console.log("higher: ", p.higher);
+          //console.log("lower: ", p.lower);
+          //console.log("higher: ", p.higher);
 
           return {
             lower: Number(p.lower),
@@ -118,7 +118,7 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
     "PhD",
     "Other",
   ];
-  console.log("Hello", user);
+  //console.log("Hello", user);
   const form = useForm<ProfileInfoFormValues & DraftFields>({
     resolver: zodResolver(profileInfoSchema) as unknown as Resolver<
       ProfileInfoFormValues & DraftFields
@@ -214,7 +214,7 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
   }, [user]);
 
   async function handleSaveChanges() {
-    console.log("handleSaveChanges called!");
+    //console.log("handleSaveChanges called!");
 
     if (!originalValues) return;
 
@@ -323,7 +323,7 @@ function JobSeekerProfile({ user, skillList }: JobSeekerProfileProps) {
 
     try {
       const result = await updateProfile(formData).unwrap();
-      console.log("Profile updated:", result);
+      //console.log("Profile updated:", result);
 
       setOriginalValues({
         ...updatedValues,

@@ -28,7 +28,7 @@ export function LoginForm() {
   });
 
   const onSubmit = async (data: LoginFormValues) => {
-    console.log("--- STARTING SUBMISSION ---", data);
+    //console.log("--- STARTING SUBMISSION ---", data);
     // Note: 'credentials' is the provider name we used in NextAuth config
     const result = await signIn("credentials", {
       redirect: false, // Prevents automatic redirect on failure
@@ -37,7 +37,7 @@ export function LoginForm() {
       // You may need to pass a specific role identifier if your Django API requires it
       // role: 'employer', // Example
     });
-    console.log("NextAuth signIn Result:", result);
+    //console.log("NextAuth signIn Result:", result);
 
     if (result?.error) {
       // 5. Handle Login Failure (e.g., incorrect credentials)

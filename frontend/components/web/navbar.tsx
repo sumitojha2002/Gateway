@@ -135,7 +135,7 @@ export function Navbar() {
           )}
 
           {/* Notification Icon */}
-          {status === "authenticated" && userRole === "job_seeker" && (
+          {status === "authenticated" && userRole && (
             <Link
               href={`/${userRole}/notification`}
               className={cn(

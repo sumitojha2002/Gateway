@@ -10,7 +10,7 @@ import { LogOutButton } from "./button/log-out-button";
 export function SwitchCard() {
   const pathname = usePathname();
   const session = useSession();
-  console.log("Session data:", session.data);
+  //console.log("Session data:", session.data);
   const role = session.data?.user.role;
   return (
     <div
@@ -25,9 +25,8 @@ export function SwitchCard() {
             "md:w-50 w-35  flex items-center justify-center rounded-none!",
             buttonVariants({
               variant:
-                pathname === `/${session.data?.user?.role}/profile`
-                  ? "brand"
-                  : "outline",
+                pathname === `/${session.data?.user?.role}/profile` ? "brand"
+                : "outline",
             }),
           )}
           style={{ height: "100%" }}
@@ -42,9 +41,8 @@ export function SwitchCard() {
             "md:w-50 w-35  flex items-center justify-center rounded-none!",
             buttonVariants({
               variant:
-                pathname === `/${session.data?.user?.role}/security`
-                  ? "brand"
-                  : "outline",
+                pathname === `/${session.data?.user?.role}/security` ? "brand"
+                : "outline",
             }),
           )}
           style={{ height: "100%" }}

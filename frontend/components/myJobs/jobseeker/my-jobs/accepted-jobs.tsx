@@ -19,9 +19,9 @@ export async function AcceptedJobs() {
   const res = await fetcher<Res>(url, {
     method: "GET",
   });
-  console.log(res);
+  //console.log(res);
   const { data } = res;
-  console.log(data);
+  //console.log(data);
   return (
     <div>
       <Separator />

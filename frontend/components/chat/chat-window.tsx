@@ -100,7 +100,7 @@ export function ChatWindow({ chatId, initialChats, onShowSidebar }: Props) {
 
       const json = await response.json();
 
-      console.log("loadMessage", json);
+      //console.log("loadMessage", json);
       // Proxy wraps the Django response: { status, message, data: { next, results } }
       const data: MessagesResponse = json.data ?? json;
 
@@ -166,9 +166,9 @@ export function ChatWindow({ chatId, initialChats, onShowSidebar }: Props) {
     const fullUrl = `${wsUrl}?token=${session.user.accessToken}`;
     const ws = new WebSocket(fullUrl);
     socketRef.current = ws;
-    console.log(ws);
+    //console.log(ws);
     ws.onopen = (event) => {
-      console.log("wsOpen:", event);
+      //console.log("wsOpen:", event);
       setIsConnected(true);
       setConnectionError("");
     };
@@ -176,7 +176,7 @@ export function ChatWindow({ chatId, initialChats, onShowSidebar }: Props) {
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        console.log("wsData", data);
+        //console.log("wsData", data);
 
         // Handle presence updates
         if (data.type === "presence") {
@@ -343,7 +343,7 @@ export function ChatWindow({ chatId, initialChats, onShowSidebar }: Props) {
 
   // ── Render ────────────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col h-full md:h-200">
+    <div className="flex flex-col h-full md:h-160">
       {/* Header */}
       <div className="border-b border-gray-200 bg-white p-4 flex items-center gap-3">
         {/* Menu button for mobile to show sidebar */}

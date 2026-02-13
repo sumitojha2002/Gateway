@@ -8,7 +8,7 @@ interface User {
 
 async function page() {
   const user: User = await fetcher(URLS.EMP_PROFILE);
-  console.log(user);
+  //console.log(user);
   const userData = user.data;
   return (
     <div>

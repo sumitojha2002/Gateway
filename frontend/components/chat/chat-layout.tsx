@@ -19,7 +19,7 @@ interface Props {
 export function ChatLayout({ initialChats }: Props) {
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
   const [showMobileSidebar, setShowMobileSidebar] = useState(true);
-  console.log("Intial", initialChats);
+  //console.log("Intial", initialChats);
 
   const handleSelectChat = (chatId: number) => {
     setSelectedChatId(chatId);
@@ -50,6 +50,7 @@ export function ChatLayout({ initialChats }: Props) {
             border-r border-gray-200 bg-white
             fixed md:relative z-50 md:z-auto h-full
             transition-transform duration-300 ease-in-out
+            mt-10
             ${showMobileSidebar ? "translate-x-0" : "-translate-x-full"}
             md:translate-x-0
           `}
@@ -62,7 +63,7 @@ export function ChatLayout({ initialChats }: Props) {
         </div>
 
         {/* Right Side - Chat Window */}
-        <div className="flex-1 w-full md:w-auto">
+        <div className="flex-1 w-full md:w-auto mt-10">
           {selectedChatId ?
             <ChatWindow
               chatId={selectedChatId}

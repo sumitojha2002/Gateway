@@ -44,11 +44,11 @@ export default async function page() {
 
   const user = await fetcher<{ data: UserProfile }>(URLS.JS_PROFILE);
   const userData = user?.data;
-  console.log("User Data:", userData);
+  //console.log("User Data:", userData);
   // Authenticated
   const skillList = await fetcher<SkillData>(URLS.JS_SKILLS);
   const skillListData = skillList.data;
-  console.log("Skills Data:", skillList);
+  //console.log("Skills Data:", skillList);
   return (
     <div>
       <JobSeekerProfile user={userData} skillList={skillListData} />

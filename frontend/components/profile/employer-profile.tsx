@@ -25,7 +25,7 @@ interface EmployerProfileProps {
 function EmployerProfile({ user }: EmployerProfileProps) {
   const router = useRouter();
   //RTK query:
-  console.log(user.company_logo_url);
+  //console.log(user.company_logo_url);
   const [updateEmployer, { isLoading }] = useUpdateEmployerProfileMutation();
   const [edit, setEdit] = useState(false);
   const [companyImage, setCompanyImage] = useState<string | null>(
@@ -79,7 +79,7 @@ function EmployerProfile({ user }: EmployerProfileProps) {
   }, [companyImage]);
 
   async function handleSaveChanges() {
-    console.log("original", originalValues);
+    //console.log("original", originalValues);
     if (!originalValues) return;
 
     const updatedValues = form.getValues();
@@ -100,7 +100,7 @@ function EmployerProfile({ user }: EmployerProfileProps) {
 
     try {
       const result = await updateEmployer(formData).unwrap();
-      console.log("Profile updated:", result);
+      //console.log("Profile updated:", result);
 
       setEdit(false);
       alert("Profile updated successfully!");

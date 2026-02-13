@@ -13,7 +13,7 @@ interface JobPageProps {
   bio: string;
   companyName: string;
   email: string;
-
+  application_status: string;
 }
 
 export function JobDetailCard({
@@ -22,7 +22,7 @@ export function JobDetailCard({
   bio,
   companyName,
   email,
-  
+  application_status,
 }: JobPageProps) {
   return (
     <div className="mb-20">
@@ -48,8 +48,8 @@ export function JobDetailCard({
                 <p className="text-[15px]">{email}</p>
               </div>
               <div className="mt-4">
-                <h1 className="font-semibold  mb-1">Contact</h1>
-                <p className="text-[15px]">123456789</p>
+                {/* <h1 className="font-semibold  mb-1">Contact</h1>
+                <p className="text-[15px]">123456789</p> */}
               </div>
             </div>
             <div className="grid grid-cols-3 mt-5 gap-5">
@@ -84,7 +84,7 @@ export function JobDetailCard({
           </div>
         </div>
       </Card>
-      <ApplyBtn id={id} />
+      <ApplyBtn id={id} application_status={application_status} />
     </div>
   );
 }

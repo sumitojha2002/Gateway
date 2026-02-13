@@ -27,7 +27,7 @@ interface Response {
 export async function ApplicantCard({ id }: MyJobProps) {
   const res = await fetcher<Response>(URLS.GET_APPLICANTS_LIST(Number(id)));
   const applicants = res.data ?? [];
-  console.log("APP", applicants);
+  //console.log("APP", applicants);
   const formatDate = (str: string) => {
     return new Date(str).toISOString().split("T")[0];
   };

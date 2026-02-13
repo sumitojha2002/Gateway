@@ -10,6 +10,7 @@ interface ExplorePageProps {
 }
 
 export interface Job {
+  status: string;
   is_bookmarked: string;
   bookmark_id: number;
   id: string | number;
@@ -80,7 +81,7 @@ async function JobsDataFetcher({
       throw new Error("Failed to fetch jobs");
     }
     const result: JobsResponse = await res.json();
-    console.log("result: ", result);
+    //console.log("result: ", result);
     return <ExploreJobSearch jobs={result.data} />;
   } catch (error) {
     return <ExploreJobSearch jobs={[]} />;

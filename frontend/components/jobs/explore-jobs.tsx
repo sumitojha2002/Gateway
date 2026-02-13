@@ -354,21 +354,26 @@ export default function ExploreJobSearch({ jobs }: JobsProps) {
         <div className="w-full">
           {jobs.length ?
             <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 ">
-              {jobs.map((item, _) => (
-                <JobsCard
-                  id={item.id}
-                  company_logo_url={item.company_logo_url}
-                  company_name={item.company_name}
-                  title={item.title}
-                  location={item.location}
-                  is_bookmarked={item.is_bookmarked}
-                  bookmark_id={item.bookmark_id}
-                  work_mode={item.work_mode}
-                  job_type={item.job_type}
-                  experience_level={item.experience_level}
-                  salary_range={item.salary_range}
-                />
-              ))}
+              {jobs
+                .filter((job) => job.status !== "expired")
+                .map((item, _) => (
+                  <div key={item.id}>
+                    <JobsCard
+                      status={item.status}
+                      id={item.id}
+                      company_logo_url={item.company_logo_url}
+                      company_name={item.company_name}
+                      title={item.title}
+                      location={item.location}
+                      is_bookmarked={item.is_bookmarked}
+                      bookmark_id={item.bookmark_id}
+                      work_mode={item.work_mode}
+                      job_type={item.job_type}
+                      experience_level={item.experience_level}
+                      salary_range={item.salary_range}
+                    />
+                  </div>
+                ))}
             </div>
           : <div className="col-span-2 text-center text-gray-500 py-10">
               No jobs found.

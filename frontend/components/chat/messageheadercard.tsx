@@ -32,7 +32,7 @@ export function MessageHeaderCard({
   isSelected = false,
   onSelect,
 }: Props) {
-  console.log(picture);
+  //console.log(picture);
   return (
     <Card
       className={`p-1 m-0 cursor-pointer border-0 rounded-none transition-colors ${

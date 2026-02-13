@@ -133,7 +133,7 @@ export function MobileNav({ navLinks }: MobileNavProps) {
             )}
 
             {/* Notification Link */}
-            {isAuthenticated && userRole === "job_seeker" && (
+            {isAuthenticated && userRole && (
               <Link
                 href={`/${userRole}/notification`}
                 className={cn(

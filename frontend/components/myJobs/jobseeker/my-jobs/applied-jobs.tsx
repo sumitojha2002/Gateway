@@ -38,7 +38,7 @@ export async function AppliedJobs() {
   });
 
   const { data } = res;
-  console.log(data);
+  //console.log(data);
   return (
     <div>
       <Separator />

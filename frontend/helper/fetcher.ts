@@ -10,22 +10,23 @@ interface FetchError extends Error {
 const fetcher = async <T>(
   url: string,
   options: RequestInit = {},
-  timeout = 10000
+  timeout = 10000,
 ): Promise<T> => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
   try {
+    // ✅ Guard: if no session, don't attempt the fetch
     const session = await getServerSession(authOptions);
-    // const lang = cookies().get("lang")?.value || "en";
+    if (!session?.user?.accessToken) {
+      clearTimeout(timeoutId);
+      throw new Error("No active session");
+    }
 
     const headers = {
       ...options.headers,
-      ...(session?.user?.accessToken && {
-        Authorization: `Bearer ${session.user.accessToken}`,
-      }),
+      Authorization: `Bearer ${session.user.accessToken}`,
       "Content-Type": "application/json",
-      //   "X-Language": lang,
     };
 
     const response = await fetch(url, {
@@ -47,11 +48,8 @@ const fetcher = async <T>(
       }
 
       const error: FetchError = new Error(
-        `API Error: ${response.status} - ${
-          errorData.message ?? "Unknown error"
-        }`
+        `API Error: ${response.status} - ${errorData.message ?? "Unknown error"}`,
       );
-
       error.data = errorData;
       error.status = response.status;
       throw error;
@@ -62,7 +60,14 @@ const fetcher = async <T>(
     clearTimeout(timeoutId);
 
     if (error.name === "AbortError") {
-      throw new Error("Request timed out");
+      // ✅ Don't crash — return empty data instead of throwing
+      console.warn(`Request timed out: ${url}`);
+      return { data: [], results: [], count: 0 } as T;
+    }
+
+    if (error.message === "No active session") {
+      // ✅ Don't crash — just return empty
+      return { data: [], results: [], count: 0 } as T;
     }
 
     throw error;

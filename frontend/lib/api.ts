@@ -145,15 +145,16 @@ export const api = createApi({
       }),
     }),
 
-    applyApplication: builder.mutation<any, { job_id: number; body: FormData }>(
-      {
-        query: ({ job_id, body }) => ({
-          url: URLS.APPLY_APP(job_id),
-          method: "POST",
-          body,
-        }),
-      },
-    ),
+    applyApplication: builder.mutation<
+      any,
+      { job_id: number; body?: FormData }
+    >({
+      query: ({ job_id, body }) => ({
+        url: URLS.APPLY_APP(job_id),
+        method: "POST",
+        body: body || undefined,
+      }),
+    }),
 
     acceptJobSeeker: builder.mutation<any, { body: string; id: number }>({
       query: ({ id, body }) => ({

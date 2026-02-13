@@ -13,20 +13,20 @@ interface JobProps {
 }
 
 export function BookMarkHeart({ job_id, bookmarked, bookmarkId }: JobProps) {
-  console.log(bookmarkId);
+  //console.log(bookmarkId);
   const { data: session, status } = useSession();
   const [addBookMark, { isLoading: isAddingBookmark }] =
     useAddBookMarkMutation();
   const [removeBookMark, { isLoading: isRemovingBookmark }] =
     useRemoveBookMarkMutation();
   const router = useRouter();
-  console.log("BOOKMARKED", bookmarked);
+  //console.log("BOOKMARKED", bookmarked);
   const role = session?.user?.role;
 
   if (status === "loading") return null;
   if (role !== "job_seeker") return null;
   const token = session?.user?.accessToken;
-  console.log("TOKEN:", token);
+  //console.log("TOKEN:", token);
 
   // Convert bookmarked to boolean for consistent checking
   const isBookmarked = bookmarked === "true" || bookmarked === true;

@@ -8,6 +8,7 @@ import { useState } from "react";
 
 interface JobProps {
   id: number | string;
+  application_status: string;
 }
 
 interface ApiErrorData {
@@ -42,10 +43,10 @@ const getErrorMessage = (value: unknown): string => {
   return "An error occurred";
 };
 
-export function ApplyBtn({ id }: JobProps) {
+export function ApplyBtn({ id, application_status }: JobProps) {
   const { data: session, status } = useSession();
 
-  const [formData, setFormData] = useState<FormData | null>(null);
+  const [cvFile, setCvFile] = useState<File | null>(null);
 
   const [
     applyApplication,
@@ -63,8 +64,9 @@ export function ApplyBtn({ id }: JobProps) {
     if (successData.message) {
       displayMessage = successData.message;
     } else if (successData.data) {
-      displayMessage = Array.isArray(successData.data)
-        ? successData.data.join(". ")
+      displayMessage =
+        Array.isArray(successData.data) ?
+          successData.data.join(". ")
         : successData.data;
     } else {
       displayMessage = "Application submitted successfully!";
@@ -128,11 +130,25 @@ export function ApplyBtn({ id }: JobProps) {
   } else {
     const isEmployer = session?.user.role === "employer";
 
-    const handleApply = async () => {
+    // Quick apply without CV
+    const handleQuickApply = async () => {
       if (!isEmployer) {
         await applyApplication({
           job_id: Number(id),
-          body: formData || new FormData(),
+          body: {} as any, // Send empty object instead of FormData
+        });
+      }
+    };
+
+    // Apply with CV
+    const handleApplyWithCV = async () => {
+      if (!isEmployer && cvFile) {
+        const formData = new FormData();
+        formData.append("cv", cvFile);
+
+        await applyApplication({
+          job_id: Number(id),
+          body: formData,
         });
       }
     };
@@ -140,50 +156,88 @@ export function ApplyBtn({ id }: JobProps) {
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const fileInput = event.target.files;
       if (fileInput && fileInput[0]) {
-        const form = new FormData();
-        form.append("cv", fileInput[0]);
-        setFormData(form);
+        setCvFile(fileInput[0]);
       }
     };
 
+    const isDisabled =
+      isEmployer ||
+      isLoading ||
+      application_status === "applied" ||
+      application_status === "selected" ||
+      application_status === "rejected";
+
     return (
       <div>
+        {/* Quick Apply Button */}
         <Button
           className={cn(
             "w-full mt-5 rounded-none",
-            isEmployer && "opacity-50 cursor-not-allowed",
+            isDisabled && "opacity-50 cursor-not-allowed",
           )}
-          variant={"brand"}
-          disabled={isEmployer || isLoading}
-          onClick={handleApply}
+          variant="brand"
+          disabled={isDisabled}
+          onClick={handleQuickApply}
         >
-          {isLoading ? "Applying..." : "Apply"}
+          {isLoading ? "Applying..." : "Quick Apply"}
         </Button>
 
-        {!isEmployer && (
-          <div className="mt-4">
-            <label
-              htmlFor="cv-upload"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Upload your CV (optional)
-            </label>
-            <input
-              type="file"
-              id="cv-upload"
-              name="cv-upload"
-              accept=".pdf,.docx"
-              onChange={handleFileChange}
-              className="mt-2 block w-full text-sm text-gray-500 border border-gray-300 rounded-md"
-            />
-            {!formData && (
-              <p className="text-gray-500 text-xs mt-1">
-                No file selected. You can apply without a CV.
-              </p>
-            )}
-          </div>
-        )}
+        {!isEmployer &&
+          application_status !== "applied" &&
+          application_status !== "selected" &&
+          application_status !== "rejected" && (
+            <div className="mt-4">
+              <label
+                htmlFor="cv-upload"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Upload your CV (optional)
+              </label>
+              <input
+                type="file"
+                id="cv-upload"
+                name="cv-upload"
+                accept=".pdf,.doc,.docx"
+                onChange={handleFileChange}
+                className="mt-2 block w-full text-sm text-gray-500 border border-gray-300 rounded-md"
+              />
+              {!cvFile ?
+                <p className="text-gray-500 text-xs mt-1">
+                  No file selected. Click "Quick Apply" above to apply without a
+                  CV.
+                </p>
+              : <>
+                  <p className="text-green-600 text-xs mt-1">
+                    Selected: {cvFile.name}
+                  </p>
+                  <Button
+                    className="w-full mt-2 rounded-none"
+                    variant="outline"
+                    disabled={isDisabled}
+                    onClick={handleApplyWithCV}
+                  >
+                    {isLoading ? "Applying..." : "Apply with CV"}
+                  </Button>
+                </>
+              }
+            </div>
+          )}
 
+        {application_status === "applied" && (
+          <p className="pt-2 text-center text-[#f31717]">
+            You have already applied.
+          </p>
+        )}
+        {application_status === "selected" && (
+          <p className="pt-2 text-center text-green-600">
+            You have been selected!
+          </p>
+        )}
+        {application_status === "rejected" && (
+          <p className="pt-2 text-center text-red-600">
+            Your application was not selected.
+          </p>
+        )}
         {displayMessage && (
           <p
             className={cn(

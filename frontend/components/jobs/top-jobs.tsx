@@ -11,7 +11,7 @@ export default async function RecommendedJobs() {
   if (session?.user.role !== "job_seeker") return null;
 
   const res = await fetcher(URLS.GET_RECOMMENDED_JOBS);
-  console.log("HEllo", res);
+  //console.log("HEllo", res);
   const jobs: Job[] = Array.isArray(res) ? res : [];
 
   return (
@@ -19,7 +19,6 @@ export default async function RecommendedJobs() {
       <div className="flex w-full justify-start mt-4 mb-10">
         <h1 className="text-[20px] md:text-[30px]">
           <div className="flex gap-2">
-            <span className="text-[#4A70A9] font-bold">[AI]</span>
             <span>Recommended Jobs</span>
           </div>
         </h1>
@@ -31,6 +30,8 @@ export default async function RecommendedJobs() {
             {jobs.map((item: any, _: any) => (
               <div key={item.id}>
                 <JobsCard
+                  company_name={item.company_name}
+                  status={item.status}
                   id={item.id}
                   company_logo_url={item.company_logo_url}
                   title={item.title}

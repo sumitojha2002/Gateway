@@ -7,6 +7,7 @@ import fetcher from "@/helper/fetcher";
 import { URLS } from "@/constants";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { JobSills } from "./job-skills";
 
 interface JobPageProps {
   jobId: number | string;
@@ -36,6 +37,7 @@ interface ResponseData {
     created_at: string;
     updated_at: string;
     company_bio: string;
+    application_status: string;
   };
 }
 
@@ -50,7 +52,7 @@ export async function JobDetail({ jobId }: JobPageProps) {
     },
   });
   const { data } = res;
-  console.log(data);
+  //console.log(data);
   return (
     <div className="flex gap-5 flex-col md:flex-row">
       <div className="md:w-3/4 mt-10 mb-10 flex flex-col">
@@ -75,9 +77,13 @@ export async function JobDetail({ jobId }: JobPageProps) {
           />
         </div>
         <div className="mt-10 md:mb-5">
+          <JobSills skills={data.skills} />
+        </div>
+        <div className="mt-10 md:mb-5">
           <JobDesc desc={data.description} />
         </div>
       </div>
+
       <div className="md:w-1/4 md:mt-10">
         <JobDetailCard
           id={data.id}
@@ -85,6 +91,7 @@ export async function JobDetail({ jobId }: JobPageProps) {
           bio={data.company_bio}
           companyName={data.company_name}
           email={data.email}
+          application_status={data.application_status}
         />
       </div>
     </div>

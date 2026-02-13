@@ -18,7 +18,7 @@ interface Props {
 
 export function ChatList({ initialChats }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
-  console.log(initialChats);
+  //console.log(initialChats);
   const filteredChats = initialChats.filter(
     (item) =>
       item.display_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
