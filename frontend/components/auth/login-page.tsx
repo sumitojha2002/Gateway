@@ -94,7 +94,9 @@ export function LoginForm() {
                       onClick={() => setShowPassword((prev) => !prev)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-sm  w-7 h-7 rounded-full p-0.5"
                     >
-                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      {showPassword ?
+                        <EyeOff size={16} />
+                      : <Eye size={16} />}
                     </Button>
                   </div>
                   {fieldState.invalid && (
@@ -105,7 +107,7 @@ export function LoginForm() {
             />
             <Field>
               <div className="flex justify-end">
-                <Link href="">Forgot Password?</Link>
+                <Link href="/forget-password">Forgot Password?</Link>
               </div>
             </Field>
             {/* The Button is now the submit button for the form */}

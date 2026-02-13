@@ -11,6 +11,7 @@ export const URLS = {
   RE_OTP: `${API_BASE_URL}/resend-otp/`,
   REFRESH: `${API_BASE_URL}/account/token/refresh/`,
   VERIFY_EMAIL: `${API_BASE_URL}/account/verify-email/`,
+
   //employer GET PUT PATCH
   EMP_PROFILE: `${API_BASE_URL}/employer/profile/`,
 
@@ -57,6 +58,46 @@ export const URLS = {
   //Reject job
   REJECT_JOB: (id: number) =>
     `${API_BASE_URL}/job/job-application-status-update/${id}/`,
+  //chat initiate
+  CHAT_INITIATE: `${API_BASE_URL}/chat/chat-initiate/`,
+
+  // ========================================
+  // CHAT ENDPOINTS
+  // ========================================
+
+  // GET - Get all chats for current user
+  GET_CHATS: `${API_BASE_URL}/chat/chats/`,
+
+  // GET - Get specific chat details
+  GET_CHAT_DETAIL: (id: number | string) => `${API_BASE_URL}/chat/chats/${id}/`,
+
+  // GET - Get messages for a specific chat
+  GET_CHAT_MESSAGES: (id: number | string) =>
+    `${API_BASE_URL}/chat/chat/${id}/messages`,
+
+  // WebSocket - Real-time chat connection
+  WS_CHAT: (id: number | string) =>
+    `${BASE_URL?.replace("http", "ws")}/ws/chat/${id}/`,
+
+  //notification
+  GET_NOTIFICATION: `${API_BASE_URL}/notification/notifications/`,
+
+  MARK_AS_READ: (id: number | string) =>
+    `${API_BASE_URL}/notification/notification/${id}/status`,
+
+  GET_RECOMMENDED_JOBS: `${API_BASE_URL}/job/recommended/`,
+
+  POST_OTP_API_REGISTER: `${API_BASE_URL}/account/verify-email/`,
+
+  RESEND_OTP_REGISTER: `${API_BASE_URL}/account/resend-otp/`,
+
+  REQ_PASSWORD_RESET: `${API_BASE_URL}/account/password-reset-request/`,
+
+  RESET_PASSWORD: `${API_BASE_URL}/account/password-reset-set-new-password/`,
+
+  REQ_PASSWORD_RESET_OTP: `${API_BASE_URL}/account/password-reset-request/`,
+
+  SEND_PASSWORD_RESET_OPT: `${API_BASE_URL}/account/password-reset-otp-verify/`,
 };
 
 export const ROLES = {

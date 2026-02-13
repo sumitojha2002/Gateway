@@ -1,11 +1,15 @@
 import { Button } from "@/components/ui/button";
 
-export function Download() {
+interface Props {
+  cv: string;
+}
+
+export function Download({ cv }: Props) {
   return (
-    <div>
-      <Button variant={"brand"} className="rounded-none w-full">
+    <Button asChild variant="brand" className="rounded-none w-full">
+      <a href={cv} target="_blank" rel="noopener noreferrer">
         Download CV
-      </Button>
-    </div>
+      </a>
+    </Button>
   );
 }

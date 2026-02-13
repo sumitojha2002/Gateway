@@ -13,6 +13,7 @@ interface MyJobProps {
 }
 
 interface UserData {
+  cv_url: string;
   user_name: string;
   profile_pic_url: string;
   id: number | string;
@@ -26,7 +27,7 @@ interface Response {
 export async function ApplicantCard({ id }: MyJobProps) {
   const res = await fetcher<Response>(URLS.GET_APPLICANTS_LIST(Number(id)));
   const applicants = res.data ?? [];
-
+  console.log("APP", applicants);
   const formatDate = (str: string) => {
     return new Date(str).toISOString().split("T")[0];
   };
@@ -72,7 +73,7 @@ export async function ApplicantCard({ id }: MyJobProps) {
                 {/* Right Section: Action Buttons */}
                 <div className="flex flex-col! sm:grid sm:grid-cols-1 lg:grid lg:grid-cols-2 lg:items-center gap-2 w-full sm:w-auto lg:w-auto">
                   <ViewProfile userId={applicant.id} jobId={id} />
-                  <Download />
+                  <Download cv={applicant.cv_url} />
                 </div>
               </div>
             </CardContent>

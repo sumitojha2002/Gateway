@@ -15,9 +15,6 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import ProfileImage from "@/public/user_profile.jpg";
 import { BookMarkHeart } from "./JobDetail/bookmark/bookmark-heart";
-interface JobProps {
-  job: Job[];
-}
 
 const getLabel = (list: { label: string; value: string }[], value: string) =>
   list.find((item) => item.value === value)?.label ?? value;
@@ -42,7 +39,19 @@ const formatSalary = (salaryRange?: string) => {
   }
 };
 
-export function JobsCard({ job }: JobProps) {
+export function JobsCard({
+  id,
+  company_logo_url,
+  company_name,
+  title,
+  location,
+  is_bookmarked,
+  bookmark_id,
+  work_mode,
+  job_type,
+  experience_level,
+  salary_range,
+}: Job) {
   const jobTypes = [
     { label: "Intern", value: "intern" },
     { label: "Full Time", value: "full_time" },
@@ -56,71 +65,64 @@ export function JobsCard({ job }: JobProps) {
     { label: "Hybrid", value: "hybrid" },
   ];
 
-  console.log(job.company_logo_url);
   return (
-    <div className=" grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 ">
-      {job.map((job) => (
-        <Card key={job.id} className="w-full">
-          <CardHeader>
-            <div className="flex justify-between">
-              <div className="flex gap-4">
-                <Image
-                  src={
-                    job.company_logo_url ? job.company_logo_url : ProfileImage
-                  }
-                  width={90}
-                  height={90}
-                  alt="Volk"
-                  className="rounded-md object-contain"
-                />
-                <div className="flex-col">
-                  <CardTitle className={styles.jobCardTitle}>
-                    {job.company_name}
-                  </CardTitle>
-                  <h1 className={styles.jobCardRole}>{job.title}</h1>
-                  <CardDescription>
-                    {job.location == "string" ? "" : job.location}
-                  </CardDescription>
-                </div>
-              </div>
+    <Card key={id} className="w-full">
+      <CardHeader>
+        <div className="flex justify-between">
+          <div className="flex gap-4">
+            <Image
+              src={company_logo_url ? company_logo_url : ProfileImage}
+              width={90}
+              height={90}
+              alt="Volk"
+              className="rounded-md object-contain"
+            />
+            <div className="flex-col">
+              <CardTitle className={styles.jobCardTitle}>
+                {company_name}
+              </CardTitle>
+              <h1 className={styles.jobCardRole}>{title}</h1>
+              <CardDescription>
+                {location == "string" ? "" : location}
+              </CardDescription>
+            </div>
+          </div>
 
-              <BookMarkHeart
-                job_id={job.id}
-                bookmarked={job.is_bookmarked}
-                bookmarkId={job.bookmark_id}
-              />
-            </div>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            <div className="flex justify-between ">
-              <Label className={styles.jobType}>
-                {getLabel(workMode, job.work_mode ?? "")}
-              </Label>
-              <Label className={styles.jobType}>
-                {getLabel(jobTypes, job.job_type ?? "")}
-              </Label>
-              <Label className={styles.jobType}>{job.experience_level}</Label>
-            </div>
-            <div>
-              <p className="text-[#4A70A9] font-semibold  text-[20px]">
-                {" "}
-                {formatSalary(job.salary_range)}
-              </p>
-            </div>
-          </CardContent>
-          <CardFooter className="w-full">
-            <Link
-              href={`/explore-jobs/${job.id}/view-job`}
-              className={cn(
-                "w-full hover:bg-[#4A70A9]! hover:text-white!",
-                buttonVariants({ variant: "outline" }),
-              )}
-            >
-              View
-            </Link>
-          </CardFooter>
-        </Card>
-      ))}
-    </div>
+          <BookMarkHeart
+            job_id={id}
+            bookmarked={is_bookmarked}
+            bookmarkId={bookmark_id}
+          />
+        </div>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        <div className="flex justify-between ">
+          <Label className={styles.jobType}>
+            {getLabel(workMode, work_mode ?? "")}
+          </Label>
+          <Label className={styles.jobType}>
+            {getLabel(jobTypes, job_type ?? "")}
+          </Label>
+          <Label className={styles.jobType}>{experience_level}</Label>
+        </div>
+        <div>
+          <p className="text-[#4A70A9] font-semibold  text-[20px]">
+            {" "}
+            {formatSalary(salary_range)}
+          </p>
+        </div>
+      </CardContent>
+      <CardFooter className="w-full">
+        <Link
+          href={`/explore-jobs/${id}/view-job`}
+          className={cn(
+            "w-full hover:bg-[#4A70A9]! hover:text-white!",
+            buttonVariants({ variant: "outline" }),
+          )}
+        >
+          View
+        </Link>
+      </CardFooter>
+    </Card>
   );
 }

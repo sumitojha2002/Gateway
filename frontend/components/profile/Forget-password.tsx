@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Eye, EyeOff, Clock, RotateCcw } from "lucide-react";
-import { Card, CardContent } from "../ui/card";
+import { Eye, EyeOff, Clock, RotateCcw, ArrowLeft } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -14,13 +14,18 @@ import {
   usePasswordResetVerifyOTPMutation,
   usePasswordResetSetNewMutation,
 } from "@/lib/api";
-import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const OTP_LENGTH = 6;
 const OTP_EXPIRY = 120; // 2 minutes in seconds
 const RESEND_COOLDOWN = 30; // seconds after resend
 
-// Form schema for new password
+// Email form schema
+const emailSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+});
+
+// Password form schema
 const passwordSchema = z
   .object({
     newPassword: z.string().min(8, "Password must be at least 8 characters"),
@@ -31,15 +36,18 @@ const passwordSchema = z
     path: ["confirmPassword"],
   });
 
+type EmailFormValues = z.infer<typeof emailSchema>;
 type PasswordFormValues = z.infer<typeof passwordSchema>;
 
-type PasswordChangeStep = "request" | "otp" | "newPassword";
+type ForgotPasswordStep = "email" | "otp" | "newPassword";
 
-export function ChangePassword() {
+export function ForgotPassword() {
+  const router = useRouter();
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [currentStep, setCurrentStep] = useState<PasswordChangeStep>("request");
+  const [currentStep, setCurrentStep] = useState<ForgotPasswordStep>("email");
+  const [userEmail, setUserEmail] = useState("");
   const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [otpError, setOtpError] = useState<string | null>(null);
 
@@ -58,10 +66,14 @@ export function ChangePassword() {
   const [passwordResetSetNew, { isLoading: isSetNewLoading }] =
     usePasswordResetSetNewMutation();
 
-  const session = useSession();
-  const userEmail = session.data?.user?.email || session.data?.user?.id;
+  const emailForm = useForm<EmailFormValues>({
+    resolver: zodResolver(emailSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
 
-  const form = useForm<PasswordFormValues>({
+  const passwordForm = useForm<PasswordFormValues>({
     resolver: zodResolver(passwordSchema),
     defaultValues: {
       newPassword: "",
@@ -149,29 +161,26 @@ export function ChangePassword() {
     focusInput(Math.min(pasted.length, OTP_LENGTH - 1));
   };
 
-  // Step 1: Request password reset (sends OTP)
-  const handlePasswordResetRequest = async () => {
+  // Step 1: Submit email and request OTP
+  const handleEmailSubmit = async (data: EmailFormValues) => {
     setSuccessMessage(null);
     setOtpError(null);
 
-    if (!userEmail) {
-      setOtpError("User email not found. Please log in again.");
-      return;
-    }
-
     try {
-      await passwordResetRequest({ email: userEmail }).unwrap();
+      await passwordResetRequest({ email: data.email }).unwrap();
 
-      // Move to OTP step and start timer
+      // Save email and move to OTP step
+      setUserEmail(data.email);
       setCurrentStep("otp");
       setTimeLeft(OTP_EXPIRY);
       setResendCooldown(0);
     } catch (err: any) {
       const serverMsg =
+        err?.data?.email?.[0] ??
         err?.data?.detail ??
         err?.data?.message ??
         "Failed to send OTP. Please try again.";
-      setOtpError(serverMsg);
+      emailForm.setError("email", { message: serverMsg });
     }
   };
 
@@ -217,14 +226,12 @@ export function ChangePassword() {
         confirm_new_password: data.confirmPassword,
       }).unwrap();
 
-      setSuccessMessage("Password changed successfully!");
-      form.reset();
-      setOtp(Array(OTP_LENGTH).fill(""));
+      setSuccessMessage("Password reset successfully!");
+      passwordForm.reset();
 
-      // Reset to request step after 2 seconds
+      // Redirect to login after 2 seconds
       setTimeout(() => {
-        setCurrentStep("request");
-        setSuccessMessage(null);
+        router.push("/login");
       }, 2000);
     } catch (err: any) {
       const serverMsg =
@@ -232,8 +239,8 @@ export function ChangePassword() {
         err?.data?.confirm_new_password?.[0] ??
         err?.data?.detail ??
         err?.data?.message ??
-        "Failed to set new password. Please try again.";
-      form.setError("newPassword", { message: serverMsg });
+        "Failed to reset password. Please try again.";
+      passwordForm.setError("newPassword", { message: serverMsg });
     }
   };
 
@@ -256,67 +263,82 @@ export function ChangePassword() {
     }
   };
 
-  const handleBackToRequest = () => {
-    setCurrentStep("request");
+  const handleBackToLogin = () => {
+    router.push("/login");
+  };
+
+  const handleBackToEmail = () => {
+    setCurrentStep("email");
     setOtp(Array(OTP_LENGTH).fill(""));
     setOtpError(null);
-    setSuccessMessage(null);
     setTimeLeft(OTP_EXPIRY);
     setResendCooldown(0);
-    form.reset();
   };
 
   const filled = otp.join("").length;
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between mb-10 mt-2">
-        <h1 className="text-3xl font-bold">Change Password</h1>
-      </div>
-
+    <div className="w-full max-w-md mx-auto">
       <Card className="w-full">
+        <CardHeader>
+          <CardTitle className="text-4xl text-center text-[#4A70A9] uppercase">
+            Forgot Password
+          </CardTitle>
+        </CardHeader>
         <CardContent>
-          {/* Step 1: Request Password Reset */}
-          {currentStep === "request" && (
-            <div className="flex flex-col gap-5 py-8">
-              {successMessage && (
-                <div className="rounded-md bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">
-                  {successMessage}
-                </div>
-              )}
-
-              {otpError && (
-                <div className="rounded-md bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-                  {otpError}
-                </div>
-              )}
-
-              <div className="text-center space-y-4">
-                <h2 className="text-xl font-semibold">
-                  Request Password Change
-                </h2>
+          {/* Step 1: Enter Email */}
+          {currentStep === "email" && (
+            <form
+              className="flex flex-col gap-5"
+              onSubmit={emailForm.handleSubmit(handleEmailSubmit)}
+            >
+              <div className="text-center space-y-2">
                 <p className="text-sm text-gray-600">
-                  Click the button below to receive an OTP at{" "}
-                  <span className="font-semibold">{userEmail}</span> to verify
-                  your identity.
+                  Enter your email address and we'll send you an OTP to reset
+                  your password.
                 </p>
               </div>
 
+              <FieldGroup>
+                <Controller
+                  name="email"
+                  control={emailForm.control}
+                  render={({ field, fieldState }) => (
+                    <Field>
+                      <FieldLabel>Email Address</FieldLabel>
+                      <Input placeholder="abc@gmail.com" {...field} />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
+                />
+              </FieldGroup>
+
               <Button
-                type="button"
+                type="submit"
                 variant="brand"
-                className="w-full"
-                onClick={handlePasswordResetRequest}
+                className="w-full uppercase"
                 disabled={isRequestLoading}
               >
                 {isRequestLoading ? "Sending OTP..." : "Send OTP"}
               </Button>
-            </div>
+
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={handleBackToLogin}
+              >
+                <ArrowLeft size={16} className="mr-2" />
+                Back to Login
+              </Button>
+            </form>
           )}
 
           {/* Step 2: Verify OTP */}
           {currentStep === "otp" && (
-            <div className="flex flex-col items-center gap-5 py-10 px-8 text-center">
+            <div className="flex flex-col items-center gap-5 py-6 text-center">
               {/* Heading */}
               <div className="space-y-1">
                 <h2 className="text-2xl font-bold text-[#4A70A9] uppercase">
@@ -425,10 +447,10 @@ export function ChangePassword() {
               {/* Back */}
               <button
                 type="button"
-                onClick={handleBackToRequest}
+                onClick={handleBackToEmail}
                 className="text-xs text-muted-foreground hover:underline"
               >
-                ← Cancel
+                ← Change Email
               </button>
             </div>
           )}
@@ -437,11 +459,13 @@ export function ChangePassword() {
           {currentStep === "newPassword" && (
             <form
               className="flex flex-col gap-5"
-              onSubmit={form.handleSubmit(handleSetNewPassword)}
+              onSubmit={passwordForm.handleSubmit(handleSetNewPassword)}
             >
               {successMessage && (
-                <div className="rounded-md bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">
+                <div className="rounded-md bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700 text-center">
                   {successMessage}
+                  <br />
+                  Redirecting to login...
                 </div>
               )}
 
@@ -456,7 +480,7 @@ export function ChangePassword() {
                 {/* New password */}
                 <Controller
                   name="newPassword"
-                  control={form.control}
+                  control={passwordForm.control}
                   render={({ field, fieldState }) => (
                     <Field>
                       <FieldLabel>New Password</FieldLabel>
@@ -487,7 +511,7 @@ export function ChangePassword() {
                 {/* Confirm password */}
                 <Controller
                   name="confirmPassword"
-                  control={form.control}
+                  control={passwordForm.control}
                   render={({ field, fieldState }) => (
                     <Field>
                       <FieldLabel>Confirm New Password</FieldLabel>
@@ -516,25 +540,24 @@ export function ChangePassword() {
                 />
               </FieldGroup>
 
-              <div className="flex flex-col gap-3">
-                <Button
-                  type="submit"
-                  variant="brand"
-                  className="w-full"
-                  disabled={isSetNewLoading}
-                >
-                  {isSetNewLoading ? "Saving..." : "Change Password"}
-                </Button>
+              <Button
+                type="submit"
+                variant="brand"
+                className="w-full uppercase"
+                disabled={isSetNewLoading}
+              >
+                {isSetNewLoading ? "Resetting..." : "Reset Password"}
+              </Button>
 
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="w-full"
-                  onClick={handleBackToRequest}
-                >
-                  Cancel
-                </Button>
-              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={handleBackToLogin}
+              >
+                <ArrowLeft size={16} className="mr-2" />
+                Back to Login
+              </Button>
             </form>
           )}
         </CardContent>

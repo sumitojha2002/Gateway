@@ -8,7 +8,6 @@ import { URLS } from "@/constants";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
-
 interface JobPageProps {
   jobId: number | string;
 }
@@ -25,7 +24,7 @@ interface ResponseData {
     title: string;
     email: string;
     company_name: string;
-    company_logo: string;
+    company_logo_url: string;
     skills: Skills[];
     years_of_experience: ExpObject;
     description: string;
@@ -82,7 +81,7 @@ export async function JobDetail({ jobId }: JobPageProps) {
       <div className="md:w-1/4 md:mt-10">
         <JobDetailCard
           id={data.id}
-          pfp={data.company_logo}
+          pfp={data.company_logo_url}
           bio={data.company_bio}
           companyName={data.company_name}
           email={data.email}

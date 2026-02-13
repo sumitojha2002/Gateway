@@ -1,7 +1,3 @@
-import React from "react";
-
-function page() {
-  return <div>Inside from notification</div>;
+export default function page() {
+  return <div></div>;
 }
-
-export default page;

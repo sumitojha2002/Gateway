@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -16,13 +15,14 @@ import {
   registerJobSeekerSchema,
 } from "@/app/schemas/auth";
 import { useRegisterMutation } from "@/lib/api";
+import { OtpVerification } from "./otp-verification";
 
 function RegisterJobSeekerPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
   const router = useRouter();
-  const [role, setRole] = useState<"job_seeker" | "employer">("job_seeker");
-  const [register, { isLoading, error }] = useRegisterMutation();
+  const [register, { isLoading }] = useRegisterMutation();
 
   const form = useForm<RegisterJobSeekerFormValues>({
     resolver: zodResolver(registerJobSeekerSchema),
@@ -34,34 +34,36 @@ function RegisterJobSeekerPage() {
       confirmPassword: "",
     },
   });
-  console.log(error);
+
   const onSubmit = async (data: RegisterJobSeekerFormValues) => {
     try {
-      console.log("hello");
-      const result = await register({
+      await register({
         email: data.email,
         role: "job_seeker",
         full_name: data.fullname,
         password: data.password,
         confirm_password: data.confirmPassword,
       }).unwrap();
-      console.log("Registration Result:", result);
-      // const result = await signIn("credentials", {
-      //     redirect: false,
-      //     email: data.email,
-      //     password: data.password,
-      // });
-      // if(result?.error){
-      //     console.error("Registration Error:", result.error);
-      //     form.setError("email", { message: "Registration failed. Try again." });
-      // }
-      router.push("/login");
+
+      // Show OTP screen
+      setRegisteredEmail(data.email);
     } catch (err) {
       console.error("Registration Exception:", err);
       form.setError("email", { message: "Registration failed. Try again." });
     }
   };
 
+  // ── OTP screen ──────────────────────────────────────────────────────────────
+  if (registeredEmail) {
+    return (
+      <OtpVerification
+        email={registeredEmail}
+        onBack={() => setRegisteredEmail(null)}
+      />
+    );
+  }
+
+  // ── Registration form ───────────────────────────────────────────────────────
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <Card>
@@ -71,13 +73,13 @@ function RegisterJobSeekerPage() {
           </CardTitle>
           <div className="flex justify-around mt-4">
             <div className="grid grid-cols-2 gap-4">
-              <Button
-                type="button"
-                onClick={() => setRole("job_seeker")}
-                variant={role === "job_seeker" ? "brand" : "ghost"}
+              <Link
+                href="/register-jobseeker"
+                className={buttonVariants({ variant: "brand" })}
+                passHref
               >
                 Register as Job Seeker
-              </Button>
+              </Link>
               <Link
                 href="/register-employer"
                 className={buttonVariants({ variant: "ghost" })}
@@ -85,9 +87,10 @@ function RegisterJobSeekerPage() {
               >
                 Register as Employer
               </Link>
-             </div>
+            </div>
           </div>
         </CardHeader>
+
         <FieldGroup className="p-4">
           <Controller
             name="email"
@@ -102,6 +105,7 @@ function RegisterJobSeekerPage() {
               </Field>
             )}
           />
+
           <Controller
             name="fullname"
             control={form.control}
@@ -115,6 +119,7 @@ function RegisterJobSeekerPage() {
               </Field>
             )}
           />
+
           <Controller
             name="password"
             control={form.control}
@@ -129,11 +134,13 @@ function RegisterJobSeekerPage() {
                   />
                   <Button
                     type="button"
-                    variant={"ghost"}
+                    variant="ghost"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-sm w-7 h-7 rounded-full p-0.5"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full p-0.5"
                   >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    {showPassword ?
+                      <EyeOff size={16} />
+                    : <Eye size={16} />}
                   </Button>
                 </div>
                 {fieldState.invalid && (
@@ -143,7 +150,6 @@ function RegisterJobSeekerPage() {
             )}
           />
 
-          {/* Add confirm password field */}
           <Controller
             name="confirmPassword"
             control={form.control}
@@ -158,15 +164,13 @@ function RegisterJobSeekerPage() {
                   />
                   <Button
                     type="button"
-                    variant={"ghost"}
+                    variant="ghost"
                     onClick={() => setShowConfirmPassword((prev) => !prev)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-sm w-7 h-7 rounded-full p-0.5"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full p-0.5"
                   >
-                    {showConfirmPassword ? (
+                    {showConfirmPassword ?
                       <EyeOff size={16} />
-                    ) : (
-                      <Eye size={16} />
-                    )}
+                    : <Eye size={16} />}
                   </Button>
                 </div>
                 {fieldState.invalid && (
@@ -175,22 +179,23 @@ function RegisterJobSeekerPage() {
               </Field>
             )}
           />
-          {/* ... */}
+
           <Button
-            variant={"brand"}
+            variant="brand"
             className="uppercase m-4"
             type="submit"
             disabled={isLoading}
           >
             {isLoading ? "Registering..." : "Register"}
           </Button>
+
           <Field>
             <div className="flex justify-end">
               <p>
                 I already have an account.
                 <Button
                   className="text-[#4A70A9] pl-1"
-                  variant={"link"}
+                  variant="link"
                   type="button"
                   onClick={() => router.push("/login")}
                 >

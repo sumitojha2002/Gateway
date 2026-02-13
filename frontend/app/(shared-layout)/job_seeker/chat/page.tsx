@@ -1,5 +1,9 @@
-import React from "react";
+import { getChats } from "@/lib/chatapi";
+import { ChatLayout } from "@/components/chat/chat-layout";
 
-export default function page() {
-  return <div>Hello from inside of jobseeker chat</div>;
+export default async function ChatPage() {
+  const res = await getChats();
+  const chats = res.data || [];
+
+  return <ChatLayout initialChats={chats} />;
 }

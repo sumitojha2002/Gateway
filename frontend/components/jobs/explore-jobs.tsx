@@ -96,9 +96,8 @@ function calculateExperienceRange(
 
   // If any selected level has null (infinity) as max, return null for max
   const hasInfinity = ranges.some((r) => r.max === null);
-  const max = hasInfinity
-    ? null
-    : Math.max(...ranges.map((r) => r.max as number));
+  const max =
+    hasInfinity ? null : Math.max(...ranges.map((r) => r.max as number));
 
   return { min, max };
 }
@@ -154,8 +153,6 @@ function parseExperienceLevelsFromURL(
   return selected;
 }
 
-
-
 export default function ExploreJobSearch({ jobs }: JobsProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -198,9 +195,9 @@ export default function ExploreJobSearch({ jobs }: JobsProps) {
   // Toggle experience level selection
   const toggleExperience = useCallback((level: ExperienceLevel) => {
     setSelectedExperience((prev) =>
-      prev.includes(level)
-        ? prev.filter((item) => item !== level)
-        : [...prev, level],
+      prev.includes(level) ?
+        prev.filter((item) => item !== level)
+      : [...prev, level],
     );
   }, []);
 
@@ -355,13 +352,28 @@ export default function ExploreJobSearch({ jobs }: JobsProps) {
 
         {/* Jobs */}
         <div className="w-full">
-          {jobs.length ? (
-            <JobsCard job={jobs} />
-          ) : (
-            <div className="col-span-2 text-center text-gray-500 py-10">
+          {jobs.length ?
+            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 ">
+              {jobs.map((item, _) => (
+                <JobsCard
+                  id={item.id}
+                  company_logo_url={item.company_logo_url}
+                  company_name={item.company_name}
+                  title={item.title}
+                  location={item.location}
+                  is_bookmarked={item.is_bookmarked}
+                  bookmark_id={item.bookmark_id}
+                  work_mode={item.work_mode}
+                  job_type={item.job_type}
+                  experience_level={item.experience_level}
+                  salary_range={item.salary_range}
+                />
+              ))}
+            </div>
+          : <div className="col-span-2 text-center text-gray-500 py-10">
               No jobs found.
             </div>
-          )}
+          }
         </div>
       </div>
     </div>
@@ -403,9 +415,9 @@ function FilterContent({
               <Button
                 key={item.value}
                 variant={
-                  selectedFilters[category.title.value] === item.value
-                    ? "brand"
-                    : "outline"
+                  selectedFilters[category.title.value] === item.value ?
+                    "brand"
+                  : "outline"
                 }
                 size="sm"
                 onClick={() =>
@@ -439,9 +451,9 @@ function FilterContent({
                 <Label htmlFor={level} className="cursor-pointer">
                   {CONSTANTS.EXPERIENCE_LEVELS[level].label} (
                   {CONSTANTS.EXPERIENCE_LEVELS[level].min}
-                  {CONSTANTS.EXPERIENCE_LEVELS[level].max === null
-                    ? "+"
-                    : `-${CONSTANTS.EXPERIENCE_LEVELS[level].max}`}{" "}
+                  {CONSTANTS.EXPERIENCE_LEVELS[level].max === null ?
+                    "+"
+                  : `-${CONSTANTS.EXPERIENCE_LEVELS[level].max}`}{" "}
                   years)
                 </Label>
               </div>

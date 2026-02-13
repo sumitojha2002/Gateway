@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithAuth } from "./baseQueryWithAuth";
 import { URLS } from "@/constants";
+import { NotificationItem } from "@/components/providers/NotificationProvider";
 
 export const api = createApi({
   reducerPath: "apiService",
@@ -70,6 +71,7 @@ export const api = createApi({
       }),
     }),
 
+    // Password Reset / Change Password Flow (uses these 3 endpoints)
     passwordResetRequest: builder.mutation({
       query: (body) => ({
         url: URLS.PWD_RE_REQ,
@@ -91,6 +93,23 @@ export const api = createApi({
         url: URLS.PWD_RE_N_PASS,
         method: "POST",
         body,
+      }),
+    }),
+
+    // OTP — fixed: was builder.query, must be builder.mutation (POST calls)
+    sendOTPRegister: builder.mutation<any, { email: string; otp: string }>({
+      query: ({ email, otp }) => ({
+        url: URLS.POST_OTP_API_REGISTER,
+        method: "POST",
+        body: { email, otp_code: otp },
+      }),
+    }),
+
+    resendOTPRegister: builder.mutation<any, { email: string }>({
+      query: ({ email }) => ({
+        url: URLS.RESEND_OTP_REGISTER,
+        method: "POST",
+        body: { email, purpose: "registration" },
       }),
     }),
 
@@ -155,7 +174,7 @@ export const api = createApi({
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: { "job": job_id },
+        body: { job: job_id },
       }),
     }),
 
@@ -173,11 +192,74 @@ export const api = createApi({
       }),
     }),
 
+    chatInitiate: builder.mutation<any, { id: number }>({
+      query: ({ id }) => ({
+        url: URLS.CHAT_INITIATE,
+        method: "POST",
+        body: { job_application: id },
+      }),
+    }),
 
     rejectJobSeeker: builder.mutation({
       query: (id: number) => ({
         url: URLS.REJECT_JOB(id),
         method: "DELETE",
+      }),
+    }),
+
+    markAsRead: builder.mutation<any, { id: number | string; stat: boolean }>({
+      query: ({ id, stat }) => ({
+        url: URLS.MARK_AS_READ(id),
+        method: "PATCH",
+        body: { is_read: stat },
+      }),
+    }),
+
+    getNotifications: builder.query<NotificationItem[], void>({
+      query: () => URLS.GET_NOTIFICATION,
+      transformResponse: (res: any) => res.data ?? [],
+    }),
+
+    requestPasswordReset: builder.query<any, { email: string }>({
+      query: ({ email }) => ({
+        url: URLS.REQ_PASSWORD_RESET,
+        method: "POST",
+        body: { email: email },
+      }),
+    }),
+
+    sendNewPassword: builder.query<
+      any,
+      { email: string; new_password: string; confirm_new_password: string }
+    >({
+      query: ({ email, new_password, confirm_new_password }) => ({
+        url: URLS.REQ_PASSWORD_RESET_OTP,
+        method: "POST",
+        body: {
+          email: email,
+          new_password: new_password,
+          confirm_new_password,
+        },
+      }),
+    }),
+
+    sendOTPPassword: builder.query<any, { email: string; otp_code: string }>({
+      query: ({ email, otp_code }) => ({
+        url: URLS.SEND_PASSWORD_RESET_OPT,
+        method: "POST",
+        body: {
+          email: email,
+          otp_code: otp_code,
+        },
+      }),
+    }),
+    resendOTPPassword: builder.query<any, { email: string }>({
+      query: ({ email }) => ({
+        url: URLS.REQ_PASSWORD_RESET_OTP,
+        method: "POST",
+        body: {
+          email: email,
+        },
       }),
     }),
   }),
@@ -190,6 +272,11 @@ export const {
   useDeleteJobSeekerExperienceMutation,
   useGetEmployerProfileQuery,
   usePatchJobMutation,
+  useMarkAsReadMutation,
+  useSendOTPRegisterMutation,
+  useResendOTPRegisterMutation,
+  useGetNotificationsQuery,
+  useChatInitiateMutation,
   useAcceptJobSeekerMutation,
   useAddBookMarkMutation,
   useRemoveBookMarkMutation,

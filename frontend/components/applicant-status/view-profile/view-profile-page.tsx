@@ -59,6 +59,7 @@ interface UserData {
     skills: Skills[];
     education: Education[];
     experiences: Experiences[];
+    cv_url: string;
   };
 }
 
@@ -98,8 +99,8 @@ export async function ViewProfilePage({ userId }: ViewPageProps) {
 
           {/* Action Buttons */}
           <div className="flex sm:grid sm:grid-cols-2 gap-2 justify-center sm:justify-start">
-            <MessageButton />
-            <Download />
+            <MessageButton status={data.application_status} id={data.id} />
+            <Download cv={data.cv_url} />
           </div>
         </div>
 

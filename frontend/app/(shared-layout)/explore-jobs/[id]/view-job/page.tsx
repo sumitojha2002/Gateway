@@ -11,7 +11,7 @@ export default async function page({ params }: JobPageProps) {
   const { id } = await params;
 
   return (
-    <div>
+    <div >
       <JobDetail jobId={id} />
     </div>
   );

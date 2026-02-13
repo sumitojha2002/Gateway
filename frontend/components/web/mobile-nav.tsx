@@ -15,6 +15,7 @@ import {
   SheetTrigger,
 } from "../ui/sheet";
 import { Button, buttonVariants } from "../ui/button";
+import { useAppSelector } from "@/hooks/hooks";
 
 interface NavLink {
   href: string;
@@ -30,6 +31,10 @@ export function MobileNav({ navLinks }: MobileNavProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
+  const unreadCount = useAppSelector(
+    (state) => state.notifications.items.filter((n) => !n.is_read).length,
+  );
+
   const userRole = session?.user?.role;
   const isAuthenticated = status === "authenticated";
 
@@ -40,8 +45,19 @@ export function MobileNav({ navLinks }: MobileNavProps) {
     <div className="md:hidden">
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" aria-label="Toggle Menu">
+          {/* Show a dot on the hamburger itself if there are unread notifications */}
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Toggle Menu"
+            className="relative"
+          >
             <MenuIcon className="h-6 w-6 text-black" />
+            {isAuthenticated &&
+              userRole === "job_seeker" &&
+              unreadCount > 0 && (
+                <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
+              )}
           </Button>
         </SheetTrigger>
 
@@ -117,18 +133,25 @@ export function MobileNav({ navLinks }: MobileNavProps) {
             )}
 
             {/* Notification Link */}
-            {isAuthenticated && userRole && (
+            {isAuthenticated && userRole === "job_seeker" && (
               <Link
                 href={`/${userRole}/notification`}
                 className={cn(
                   buttonVariants({ variant: "ghost" }),
-                  "w-full justify-start text-lg pointer-events-auto cursor-pointer!",
+                  "w-full justify-start text-lg pointer-events-auto cursor-pointer",
                   isActivePath(`/${userRole}/notification`) &&
                     "text-[#4A70A9] font-bold",
                 )}
                 onClick={closeMenu}
               >
-                <Bell size={18} className="mr-2" />
+                <span className="relative mr-2">
+                  <Bell size={18} />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
+                </span>
                 Notifications
               </Link>
             )}

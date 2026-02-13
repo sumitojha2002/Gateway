@@ -98,9 +98,25 @@ export async function Bookmark() {
     }));
 
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto">
         {transformedJobs.length > 0 ?
-          <JobsCard job={transformedJobs} />
+          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 ">
+            {transformedJobs.map((item, _) => (
+              <JobsCard
+                id={item.id}
+                company_logo_url={item.company_logo_url}
+                company_name={item.company_name}
+                title={item.title}
+                location={item.location}
+                is_bookmarked={item.is_bookmarked}
+                bookmark_id={item.bookmark_id}
+                work_mode={item.work_mode}
+                job_type={item.job_type}
+                experience_level={item.experience_level}
+                salary_range={item.salary_range}
+              />
+            ))}
+          </div>
         : <div className="text-center py-10">
             <p className="text-gray-500">No bookmarked jobs yet.</p>
             <p className="text-sm text-gray-400 mt-2">

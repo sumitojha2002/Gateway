@@ -1,7 +1,9 @@
-import React from "react";
+import { Notification } from "@/components/notification/notification";
 
-function page() {
-  return <div>Inside from notification</div>;
+export default function page() {
+  return (
+    <div>
+      <Notification />
+    </div>
+  );
 }
-
-export default page;

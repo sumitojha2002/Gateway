@@ -2,16 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button, buttonVariants } from "../ui/button";
+import { buttonVariants } from "../ui/button";
 import { lilitaOne } from "@/app/ui/fonts";
 import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { MobileNav } from "./mobile-nav";
 import { Bell, MessageCircle } from "lucide-react";
+import { useAppSelector } from "@/hooks/hooks";
 
 export function Navbar() {
   const { data: session, status } = useSession();
   const pathname = usePathname();
+
+  const unreadCount = useAppSelector(
+    (state) => state.notifications.items.filter((n) => !n.is_read).length,
+  );
 
   const MY_JOBS_ROUTE_MAP = {
     job_seeker: "/job_seeker/my-jobs/applied-jobs",
@@ -21,7 +26,6 @@ export function Navbar() {
   const myJobsHref =
     session?.user?.role ? MY_JOBS_ROUTE_MAP[session.user.role] : "/";
 
-  console.log(session?.user);
   if (status === "loading") {
     return (
       <div className="drop-shadow-xl w-full filter drop-shadow-black-500/70 bg-white sticky top-0 z-50">
@@ -48,10 +52,7 @@ export function Navbar() {
   const authenticatedLinks = [
     { href: "/", label: "Home" },
     { href: "/explore-jobs", label: "Explore Jobs" },
-    {
-      href: myJobsHref,
-      label: "My Jobs",
-    },
+    { href: myJobsHref, label: "My Jobs" },
   ];
 
   const linksToRender =
@@ -134,17 +135,22 @@ export function Navbar() {
           )}
 
           {/* Notification Icon */}
-          {status === "authenticated" && userRole && (
+          {status === "authenticated" && userRole === "job_seeker" && (
             <Link
               href={`/${userRole}/notification`}
               className={cn(
-                "p-2 hover:bg-gray-100 rounded-md transition-colors cursor-pointer",
+                "relative p-2 hover:bg-gray-100 rounded-md transition-colors cursor-pointer",
                 pathname.startsWith(`/${userRole}/notification`) &&
                   "text-[#4A70A9]",
               )}
               aria-label="Notifications"
             >
               <Bell size={20} />
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
             </Link>
           )}
         </div>
