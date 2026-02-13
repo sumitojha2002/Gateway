@@ -425,7 +425,7 @@ export function ChatWindow({ chatId, initialChats, onShowSidebar }: Props) {
           </div>
         : <div className="space-y-4">
             {/* Load more button */}
-            {nextCursor && (
+            {/* {nextCursor && (
               <div className="flex justify-center" ref={messagesTopRef}>
                 <button
                   onClick={loadMoreMessages}
@@ -435,7 +435,7 @@ export function ChatWindow({ chatId, initialChats, onShowSidebar }: Props) {
                   {loadingMore ? "Loading..." : "Load older messages"}
                 </button>
               </div>
-            )}
+            )} */}
 
             {messages
               .filter((msg) => msg.content && msg.content.trim().length > 0) // Filter empty messages
