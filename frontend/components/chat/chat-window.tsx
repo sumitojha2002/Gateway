@@ -73,6 +73,7 @@ export function ChatWindow({ chatId, initialChats, onShowSidebar }: Props) {
   );
   const picture = initialChats.find((item) => item.id === chatId)!;
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesTopRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<WebSocket | null>(null);
 
@@ -100,7 +101,7 @@ export function ChatWindow({ chatId, initialChats, onShowSidebar }: Props) {
 
       const json = await response.json();
 
-      //console.log("loadMessage", json);
+      console.log("loadMessage", json);
       // Proxy wraps the Django response: { status, message, data: { next, results } }
       const data: MessagesResponse = json.data ?? json;
 
@@ -166,9 +167,9 @@ export function ChatWindow({ chatId, initialChats, onShowSidebar }: Props) {
     const fullUrl = `${wsUrl}?token=${session.user.accessToken}`;
     const ws = new WebSocket(fullUrl);
     socketRef.current = ws;
-    //console.log(ws);
+    console.log(ws);
     ws.onopen = (event) => {
-      //console.log("wsOpen:", event);
+      console.log("wsOpen:", event);
       setIsConnected(true);
       setConnectionError("");
     };
@@ -176,7 +177,7 @@ export function ChatWindow({ chatId, initialChats, onShowSidebar }: Props) {
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        //console.log("wsData", data);
+        console.log("wsData", data);
 
         // Handle presence updates
         if (data.type === "presence") {
@@ -343,9 +344,9 @@ export function ChatWindow({ chatId, initialChats, onShowSidebar }: Props) {
 
   // ── Render ────────────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col h-full md:h-160">
-      {/* Header */}
-      <div className="border-b border-gray-200 bg-white p-4 flex items-center gap-3">
+    <div className="flex flex-col h-full overflow-hidden">
+      {/* Header - Fixed height */}
+      <div className="border-b border-gray-200 bg-white p-4 flex items-center gap-3 flex-shrink-0">
         {/* Menu button for mobile to show sidebar */}
         {onShowSidebar && (
           <button
@@ -394,8 +395,12 @@ export function ChatWindow({ chatId, initialChats, onShowSidebar }: Props) {
         </div>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
+      {/* Messages - Scrollable area that takes remaining space */}
+      <div
+        ref={messagesContainerRef}
+        className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50"
+        style={{ minHeight: 0 }}
+      >
         {loading ?
           <div className="flex justify-center items-center h-full">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
@@ -458,11 +463,6 @@ export function ChatWindow({ chatId, initialChats, onShowSidebar }: Props) {
                         : "bg-white text-gray-900 shadow-sm rounded-bl-none"
                       } ${msg.tempId ? "opacity-70" : "opacity-100"}`}
                     >
-                      {/* {!isSent && msg.sender_name && (
-                        <p className="text-xs font-semibold mb-1 opacity-70">
-                          {msg.sender_name}
-                        </p>
-                      )} */}
                       <p className="text-sm whitespace-pre-wrap break-words">
                         {msg.content}
                       </p>
@@ -481,8 +481,8 @@ export function ChatWindow({ chatId, initialChats, onShowSidebar }: Props) {
         }
       </div>
 
-      {/* Input */}
-      <div className="border-t border-gray-200 bg-white p-3 md:p-4 safe-area-bottom">
+      {/* Input - Fixed at bottom */}
+      <div className="border-t border-gray-200 bg-white p-3 md:p-4 flex-shrink-0">
         <div className="flex gap-2">
           <Input
             value={messageInput}
@@ -495,7 +495,7 @@ export function ChatWindow({ chatId, initialChats, onShowSidebar }: Props) {
           <Button
             onClick={handleSendMessage}
             disabled={!messageInput.trim() || !isConnected}
-            className="bg-blue-500 hover:bg-blue-600 px-4 md:px-6"
+            className="bg-blue-500 hover:bg-blue-600 px-4 md:px-6 flex-shrink-0"
           >
             <span className="hidden sm:inline">Send</span>
             <svg

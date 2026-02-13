@@ -19,7 +19,7 @@ interface Props {
 export function ChatLayout({ initialChats }: Props) {
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
   const [showMobileSidebar, setShowMobileSidebar] = useState(true);
-  //console.log("Intial", initialChats);
+  console.log("Intial", initialChats);
 
   const handleSelectChat = (chatId: number) => {
     setSelectedChatId(chatId);
@@ -32,7 +32,7 @@ export function ChatLayout({ initialChats }: Props) {
   };
 
   return (
-    <>
+    <div className="h-full">
       {/* Mobile Overlay - Fixed to viewport, not container */}
       {showMobileSidebar && selectedChatId && (
         <div
@@ -41,8 +41,8 @@ export function ChatLayout({ initialChats }: Props) {
         />
       )}
 
-      {/* Main Chat Container */}
-      <div className="flex h-screen md:h-[calc(100vh-1.75rem)] overflow-hidden -mx-4 md:mx-0 md:mt-7">
+      {/* Main Chat Container - Extend edge to edge with negative margins */}
+      <div className="flex h-full overflow-hidden -mx-4 md:-mx-6 lg:-mx-8">
         {/* Left Sidebar - Chat List */}
         <div
           className={`
@@ -50,7 +50,6 @@ export function ChatLayout({ initialChats }: Props) {
             border-r border-gray-200 bg-white
             fixed md:relative z-50 md:z-auto h-full
             transition-transform duration-300 ease-in-out
-            mt-10
             ${showMobileSidebar ? "translate-x-0" : "-translate-x-full"}
             md:translate-x-0
           `}
@@ -63,7 +62,7 @@ export function ChatLayout({ initialChats }: Props) {
         </div>
 
         {/* Right Side - Chat Window */}
-        <div className="flex-1 w-full md:w-auto mt-10">
+        <div className="flex-1 w-full md:w-auto h-full overflow-hidden">
           {selectedChatId ?
             <ChatWindow
               chatId={selectedChatId}
@@ -91,6 +90,6 @@ export function ChatLayout({ initialChats }: Props) {
           }
         </div>
       </div>
-    </>
+    </div>
   );
 }

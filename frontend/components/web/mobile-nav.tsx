@@ -118,7 +118,7 @@ export function MobileNav({ navLinks }: MobileNavProps) {
             {/* Chat Link */}
             {isAuthenticated && userRole && (
               <Link
-                href={`/${userRole}/chat`}
+                href={`/chat`}
                 className={cn(
                   buttonVariants({ variant: "ghost" }),
                   "w-full justify-start text-lg pointer-events-auto cursor-pointer",

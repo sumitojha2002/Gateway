@@ -123,7 +123,7 @@ export function Navbar() {
           {/* Chat Icon */}
           {status === "authenticated" && userRole && (
             <Link
-              href={`/${userRole}/chat`}
+              href={`/chat`}
               className={cn(
                 "p-2 hover:bg-gray-100 rounded-md transition-colors cursor-pointer",
                 pathname.startsWith(`/${userRole}/chat`) && "text-[#4A70A9]",
