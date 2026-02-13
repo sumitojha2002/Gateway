@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-
+import { useEffect } from "react";
 import { setNotifications } from "@/app/features/notificationSlice";
 import { useGetNotificationsQuery } from "@/lib/api";
 import { useAppDispatch } from "@/hooks/hooks";
@@ -17,23 +16,14 @@ export interface NotificationItem {
 }
 
 interface NotificationProviderProps {
-  initialNotifications: NotificationItem[];
-  children: React.ReactNode;
+  children: React.ReactNode; // ← removed initialNotifications
 }
 
 const POLL_INTERVAL = 60_000;
 
-export function NotificationProvider({ initialNotifications, children }: NotificationProviderProps) {
+export function NotificationProvider({ children }: NotificationProviderProps) {
   const dispatch = useAppDispatch();
-  const seeded = useRef(false);
 
-  // Seed Redux with server-fetched data on first render
-  if (!seeded.current) {
-    dispatch(setNotifications(initialNotifications));
-    seeded.current = true;
-  }
-
-  // RTK Query handles auth + polling — no manual fetch needed
   const { data } = useGetNotificationsQuery(undefined, {
     pollingInterval: POLL_INTERVAL,
   });

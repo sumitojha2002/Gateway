@@ -163,32 +163,18 @@ export const api = createApi({
       }),
     }),
 
-    addBookMark: builder.mutation<
-      any,
-      { job_id: number | string; token?: string }
-    >({
-      query: ({ job_id, token }) => ({
+    addBookMark: builder.mutation<any, { job_id: number | string }>({
+      query: ({ job_id }) => ({
         url: URLS.ADD_BOOKMARK,
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
         body: { job: job_id },
       }),
     }),
 
-    removeBookMark: builder.mutation<
-      any,
-      { id: number | string; token?: string }
-    >({
-      query: ({ id, token }) => ({
+    removeBookMark: builder.mutation<any, { id: number | string }>({
+      query: ({ id }) => ({
         url: URLS.REMOVE_BOOKMARK(id),
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
       }),
     }),
 
