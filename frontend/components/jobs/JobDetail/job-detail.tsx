@@ -3,7 +3,6 @@ import { ExpObject, JobSummary } from "./job-summary";
 import { JobDesc } from "./job-desc";
 import { JobDetailCard } from "./job-detail-card";
 import { LeftNavButton } from "./button/left-nav";
-import fetcher from "@/helper/fetcher";
 import { URLS } from "@/constants";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -43,16 +42,16 @@ interface ResponseData {
 
 export async function JobDetail({ jobId }: JobPageProps) {
   const session = await getServerSession(authOptions);
-  const token = session?.user.accessToken;
-  const res = await fetcher<ResponseData>(URLS.GET_JOB_BY_ID(jobId), {
+
+  const response = await fetch(URLS.GET_JOB_BY_ID(jobId), {
     cache: "no-store",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: token ? `Bearer ${token}` : "",
-    },
   });
+
+  const res: ResponseData = await response.json();
   const { data } = res;
-  //console.log(data);
+
+  console.log("DATA", data);
+
   return (
     <div className="flex gap-5 flex-col md:flex-row">
       <div className="md:w-3/4 mt-10 mb-10 flex flex-col">
