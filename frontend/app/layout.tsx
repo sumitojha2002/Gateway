@@ -11,19 +11,39 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  // ← no longer async
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Preconnect to image CDNs - Critical for LCP */}
+        <link
+          rel="preconnect"
+          href="https://storage.aayushmanamatya.com.np"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preconnect"
+          href="https://res.cloudinary.com"
+          crossOrigin="anonymous"
+        />
+
+        {/* DNS prefetch for API */}
+        <link rel="dns-prefetch" href="https://gateway-219k.onrender.com" />
+
+        {/* Preload critical CSS (if you know the chunk names) */}
+        {/* <link
+          rel="preload"
+          href="/_next/static/css/app/chunks/[root-of...]__686c00aa._.css"
+          as="style"
+        /> */}
+      </head>
       <body className={`${poppins.variable} font-sans`}>
         <NextAuthProvider>
           <ReduxProvider>
             <NotificationProvider>
-              {" "}
-              {/* ← no prop */}
               <main>{children}</main>
             </NotificationProvider>
           </ReduxProvider>

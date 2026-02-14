@@ -71,13 +71,17 @@ export function JobsCard({
       <CardHeader>
         <div className="flex justify-between">
           <div className="flex gap-4">
-            <Image
-              src={company_logo_url ? company_logo_url : ProfileImage}
-              width={90}
-              height={90}
-              alt="Volk"
-              className="rounded-md object-contain"
-            />
+            {/* Fixed: Added container with fixed dimensions to prevent layout shift */}
+            <div className="w-[90px] h-[90px] flex-shrink-0">
+              <Image
+                src={company_logo_url ? company_logo_url : ProfileImage}
+                width={90}
+                height={90}
+                alt={company_name || "Company logo"}
+                className="rounded-md object-contain w-full h-full"
+                priority={false} // or true if above the fold
+              />
+            </div>
             <div className="flex-col">
               <CardTitle className={styles.jobCardTitle}>
                 {company_name}
