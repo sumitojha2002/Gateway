@@ -30,34 +30,39 @@ export function JobSummary({
   ];
   const work = [
     { label: "onsite", value: "Onsite" },
-    {
-      label: "remote",
-      value: "Remote",
-    },
-    {
-      label: "hybrid",
-      value: "Hybrid",
-    },
+    { label: "remote", value: "Remote" },
+    { label: "hybrid", value: "Hybrid" },
   ];
 
-  const lower_exp = exp.lower;
-  const upper_exp = exp.upper;
+  // Add safety checks for exp object
+  const lower_exp = exp?.lower;
+  const upper_exp = exp?.upper;
 
   const convertSalaryFormat = () => {
-    const sal = JSON.parse(salary);
-    const upperSal = sal.upper;
-    const lowerSal = sal.lower;
+    if (!salary) return "N/A";
 
-    const formattedUpper = new Intl.NumberFormat("en-IN").format(upperSal);
-    const formattedLower = new Intl.NumberFormat("en-IN").format(lowerSal);
+    try {
+      const sal = JSON.parse(salary);
+      const upperSal = sal?.upper;
+      const lowerSal = sal?.lower;
 
-    return `Rs ${formattedLower} - Rs ${formattedUpper}`;
+      if (upperSal === undefined || lowerSal === undefined) return "N/A";
+
+      const formattedUpper = new Intl.NumberFormat("en-IN").format(upperSal);
+      const formattedLower = new Intl.NumberFormat("en-IN").format(lowerSal);
+
+      return `Rs ${formattedLower} - Rs ${formattedUpper}`;
+    } catch (error) {
+      console.error("Error parsing salary:", error);
+      return "N/A";
+    }
   };
+
   return (
     <div>
       <div>
         <h1 className="text-2xl ml-5 font-semibold">Job Summary</h1>
-        <Separator className="mt-5 mb-10 bg-[#4A70A9] " />
+        <Separator className="mt-5 mb-10 bg-[#4A70A9]" />
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-5">
         <Card>
@@ -66,7 +71,7 @@ export function JobSummary({
               <h1 className="text-[18px]">Job Type</h1>
             </CardTitle>
             <span className="text-[#4A70A9] text-[18px] font-semibold mt-2">
-              {job.map((job) => (job.label == jobType ? job.value : ""))}
+              {job.find((j) => j.label === jobType)?.value || "N/A"}
             </span>
           </CardHeader>
         </Card>
@@ -76,11 +81,9 @@ export function JobSummary({
               <h1 className="text-[18px]">Experience Level</h1>
             </CardTitle>
             <span className="text-[#4A70A9] text-[18px] font-semibold mt-2">
-              {ExperienceLevelDisplay.map((expr) =>
-                expr.lower == lower_exp && expr.upper == upper_exp
-                  ? expr.label
-                  : ""
-              )}
+              {ExperienceLevelDisplay?.find(
+                (expr) => expr.lower === lower_exp && expr.upper === upper_exp,
+              )?.label || "N/A"}
             </span>
           </CardHeader>
         </Card>
@@ -90,17 +93,17 @@ export function JobSummary({
               <h1 className="text-[18px]">Work Mode</h1>
             </CardTitle>
             <span className="text-[#4A70A9] text-[18px] font-semibold mt-2">
-              {work.map((work) => (work.label == workMode ? work.value : ""))}
+              {work.find((w) => w.label === workMode)?.value || "N/A"}
             </span>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader>
             <CardTitle>
-              <h1 className="text-[18px]">location</h1>
+              <h1 className="text-[18px]">Location</h1>
             </CardTitle>
             <span className="text-[#4A70A9] text-[18px] font-semibold mt-2">
-              {location}
+              {location || "N/A"}
             </span>
           </CardHeader>
         </Card>
