@@ -71,7 +71,7 @@ export async function Bookmark() {
       },
     );
 
-    //console.log("BOOKMARKED", res);
+    ////console.log("BOOKMARKED", res);
 
     const jobs = res?.data || [];
 

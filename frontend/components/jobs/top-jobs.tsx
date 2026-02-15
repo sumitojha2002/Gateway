@@ -11,7 +11,6 @@ export default async function RecommendedJobs() {
   if (session?.user.role !== "job_seeker") return null;
 
   const res = await fetcher(URLS.GET_RECOMMENDED_JOBS);
-  //console.log("HEllo", res);
   const jobs: Job[] = Array.isArray(res) ? res : [];
 
   return (
@@ -37,7 +36,7 @@ export default async function RecommendedJobs() {
                   title={item.title}
                   location={item.location}
                   is_bookmarked={item.is_bookmarked}
-                  bookmark_id={item.bookmarked_id}
+                  bookmark_id={item.bookmark_id}
                   work_mode={item.work_mode}
                   job_type={item.job_type}
                   experience_level={item.experience_level}

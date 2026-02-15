@@ -2,8 +2,7 @@ import { Suspense } from "react";
 import ExploreJobSearch from "@/components/jobs/explore-jobs";
 import { JobsCard } from "@/components/jobs/jobs-card";
 import { URLS } from "@/constants";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import fetcher from "@/helper/fetcher";
 
 interface ExplorePageProps {
   searchParams?: Record<string, string | undefined>;
@@ -29,7 +28,6 @@ export interface Job {
 
 interface JobsResponse {
   data: Job[];
-  json: Function;
 }
 
 export default async function ExplorePage({
@@ -53,8 +51,6 @@ async function JobsDataFetcher({
 }: {
   params: Record<string, string | undefined>;
 }) {
-  const session = await getServerSession(authOptions);
-  const token = session?.user?.accessToken;
   const queryObj: Record<string, string> = {};
 
   if (params.job_type) queryObj.job_type = params.job_type;
@@ -70,18 +66,9 @@ async function JobsDataFetcher({
     : "";
 
   try {
-    const res = await fetch(`${URLS.GET_JOB_LIST}${queryString}`, {
-      cache: "no-store",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token ? `Bearer ${token}` : "",
-      },
-    });
-    if (!res.ok) {
-      throw new Error("Failed to fetch jobs");
-    }
-    const result: JobsResponse = await res.json();
-    //console.log("result: ", result);
+    const result: JobsResponse = await fetcher<JobsResponse>(
+      `${URLS.GET_JOB_LIST}${queryString}`,
+    );
     return <ExploreJobSearch jobs={result.data} />;
   } catch (error) {
     return <ExploreJobSearch jobs={[]} />;

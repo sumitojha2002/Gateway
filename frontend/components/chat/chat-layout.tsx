@@ -19,7 +19,7 @@ interface Props {
 export function ChatLayout({ initialChats }: Props) {
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
   const [showMobileSidebar, setShowMobileSidebar] = useState(true);
-  console.log("Intial", initialChats);
+  //console.log("Intial", initialChats);
 
   const handleSelectChat = (chatId: number) => {
     setSelectedChatId(chatId);

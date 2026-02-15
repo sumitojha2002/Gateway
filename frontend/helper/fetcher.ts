@@ -16,18 +16,18 @@ const fetcher = async <T>(
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
   try {
-    // ✅ Guard: if no session, don't attempt the fetch
     const session = await getServerSession(authOptions);
-    if (!session?.user?.accessToken) {
-      clearTimeout(timeoutId);
-      throw new Error("No active session");
-    }
 
-    const headers = {
-      ...options.headers,
-      Authorization: `Bearer ${session.user.accessToken}`,
+    // ✅ Build headers conditionally
+    const headers: Record<string, string> = {
       "Content-Type": "application/json",
+      ...(options.headers as Record<string, string>),
     };
+
+    // Only add auth header if session exists
+    if (session?.user?.accessToken) {
+      headers.Authorization = `Bearer ${session.user.accessToken}`;
+    }
 
     const response = await fetch(url, {
       ...options,
@@ -60,13 +60,7 @@ const fetcher = async <T>(
     clearTimeout(timeoutId);
 
     if (error.name === "AbortError") {
-      // ✅ Don't crash — return empty data instead of throwing
       console.warn(`Request timed out: ${url}`);
-      return { data: [], results: [], count: 0 } as T;
-    }
-
-    if (error.message === "No active session") {
-      // ✅ Don't crash — just return empty
       return { data: [], results: [], count: 0 } as T;
     }
 

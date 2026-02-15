@@ -22,7 +22,7 @@ interface Res {
 export async function JobHistory() {
   const res = await fetcher<Res>(URLS.GET_HISTORY_JOBS);
   const { data } = res;
-  //console.log("History", data);
+  ////console.log("History", data);
   return (
     <div>
       <div className="flex justify-between mb-10 mt-2">

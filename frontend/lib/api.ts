@@ -174,7 +174,7 @@ export const api = createApi({
 
     removeBookMark: builder.mutation<any, { id: number | string }>({
       query: ({ id }) => ({
-        url: URLS.REMOVE_BOOKMARK(id),
+        url: URLS.REMOVE_BOOKMARK(id), // needs `id`
         method: "DELETE",
       }),
     }),

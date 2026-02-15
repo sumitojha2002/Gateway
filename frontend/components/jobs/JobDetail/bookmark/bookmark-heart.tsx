@@ -13,53 +13,56 @@ interface JobProps {
 }
 
 export function BookMarkHeart({ job_id, bookmarked, bookmarkId }: JobProps) {
-  //console.log(bookmarkId);
   const { data: session, status } = useSession();
   const [addBookMark, { isLoading: isAddingBookmark }] =
     useAddBookMarkMutation();
   const [removeBookMark, { isLoading: isRemovingBookmark }] =
     useRemoveBookMarkMutation();
   const router = useRouter();
-  //console.log("BOOKMARKED", bookmarked);
+
   const role = session?.user?.role;
 
   if (status === "loading") return null;
   if (role !== "job_seeker") return null;
-  const token = session?.user?.accessToken;
-  //console.log("TOKEN:", token);
 
-  // Convert bookmarked to boolean for consistent checking
   const isBookmarked = bookmarked === "true" || bookmarked === true;
-
-  // Combined loading state
   const isLoading = isAddingBookmark || isRemovingBookmark;
 
   const handleAddBookmark = async () => {
+    //console.log("➕ [ADD BOOKMARK] Sending request with:", { job_id });
+
     try {
-      await addBookMark({ job_id, token }).unwrap();
+      const response = await addBookMark({ job_id }).unwrap();
+      //console.log("✅ [ADD BOOKMARK] Success response:", response);
       alert("Job bookmarked successfully!");
       router.refresh();
     } catch (error: any) {
-      // Check nested data structure
-      const errorMessage = error?.data?.data?.non_field_errors?.[0];
+      console.error("❌ [ADD BOOKMARK] Error response:", error);
+      console.error("❌ [ADD BOOKMARK] Error data:", error?.data);
+      console.error("❌ [ADD BOOKMARK] Error status:", error?.status);
 
+      const errorMessage = error?.data?.data?.non_field_errors?.[0];
       if (errorMessage?.includes("already bookmarked")) {
         alert("You have already bookmarked this job.");
       } else {
         alert("Failed to bookmark job. Please try again.");
-        console.error("Failed to bookmark job:", error);
       }
     }
   };
 
   const handleRemoveBookmark = async () => {
+    //console.log("🗑️ [REMOVE BOOKMARK] Sending request with:", { id: bookmarkId });
+
     try {
-      await removeBookMark({ id: bookmarkId, token }).unwrap();
+      const response = await removeBookMark({ id: bookmarkId }).unwrap();
+      //console.log("✅ [REMOVE BOOKMARK] Success response:", response);
       alert("Bookmark removed successfully!");
       router.refresh();
     } catch (error: any) {
+      console.error("❌ [REMOVE BOOKMARK] Error response:", error);
+      console.error("❌ [REMOVE BOOKMARK] Error data:", error?.data);
+      console.error("❌ [REMOVE BOOKMARK] Error status:", error?.status);
       alert("Failed to remove bookmark. Please try again.");
-      console.error("Failed to remove bookmark:", error);
     }
   };
 

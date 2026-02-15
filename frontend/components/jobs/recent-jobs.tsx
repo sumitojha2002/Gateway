@@ -2,16 +2,13 @@ import { URLS } from "@/constants";
 import React from "react";
 import { JobsCard } from "./jobs-card";
 import { Job } from "@/app/(shared-layout)/explore-jobs/page";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import fetcher from "@/helper/fetcher";
 
 interface Res {
   data: Job[];
 }
 
 export async function RecentJobs() {
-  const session = await getServerSession(authOptions);
-  const token = session?.user?.accessToken;
   const queryObj: Record<string, string> = {};
 
   const queryString =
@@ -20,20 +17,7 @@ export async function RecentJobs() {
     : "";
 
   try {
-    const res = await fetch(`${URLS.GET_JOB_LIST}${queryString}`, {
-      cache: "no-store",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token ? `Bearer ${token}` : "",
-      },
-    });
-
-    if (!res.ok) {
-      throw new Error("Failed to fetch jobs");
-    }
-
-    // Parse the JSON response
-    const responseData: Res = await res.json();
+    const responseData: Res = await fetcher<Res>(URLS.GET_JOB_LIST);
     const data = responseData.data || [];
 
     return (
@@ -61,7 +45,7 @@ export async function RecentJobs() {
                       title={item.title}
                       location={item.location}
                       is_bookmarked={item.is_bookmarked}
-                      bookmark_id={item.bookmarked_id}
+                      bookmark_id={item.bookmark_id}
                       work_mode={item.work_mode}
                       job_type={item.job_type}
                       experience_level={item.experience_level}

@@ -10,7 +10,7 @@ import { LogOutButton } from "./button/log-out-button";
 export function SwitchCard() {
   const pathname = usePathname();
   const session = useSession();
-  //console.log("Session data:", session.data);
+  ////console.log("Session data:", session.data);
   const role = session.data?.user.role;
   return (
     <div

@@ -1,9 +1,8 @@
-"use client";
-
-import { useEffect } from "react";
-import { setNotifications } from "@/app/features/notificationSlice";
-import { useGetNotificationsQuery } from "@/lib/api";
-import { useAppDispatch } from "@/hooks/hooks";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import fetcher from "@/helper/fetcher";
+import { URLS } from "@/constants";
+import { NotificationWrapper } from "./NotificationWrapper";
 
 export interface NotificationItem {
   id: number;
@@ -15,24 +14,37 @@ export interface NotificationItem {
   user: number;
 }
 
-interface NotificationProviderProps {
-  children: React.ReactNode; // ← removed initialNotifications
+interface NotificationResponse {
+  data: NotificationItem[];
+  count?: number;
 }
 
-const POLL_INTERVAL = 60_000;
+interface NotificationProviderProps {
+  children: React.ReactNode;
+}
 
-export function NotificationProvider({ children }: NotificationProviderProps) {
-  const dispatch = useAppDispatch();
+export async function NotificationProvider({
+  children,
+}: NotificationProviderProps) {
+  const session = await getServerSession(authOptions);
+  let notifications: NotificationItem[] = [];
 
-  const { data } = useGetNotificationsQuery(undefined, {
-    pollingInterval: POLL_INTERVAL,
-  });
-
-  useEffect(() => {
-    if (data) {
-      dispatch(setNotifications(data));
+  // Only fetch if user is authenticated
+  if (session?.user?.accessToken) {
+    try {
+      const response = await fetcher<NotificationResponse>(
+        URLS.GET_NOTIFICATION,
+      );
+      notifications = response.data || [];
+    } catch (error) {
+      console.error("Failed to fetch notifications:", error);
+      notifications = [];
     }
-  }, [data, dispatch]);
+  }
 
-  return <>{children}</>;
+  return (
+    <NotificationWrapper initialNotifications={notifications}>
+      {children}
+    </NotificationWrapper>
+  );
 }

@@ -7,6 +7,7 @@ import { URLS } from "@/constants";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { JobSills } from "./job-skills";
+import fetcher from "@/helper/fetcher";
 
 interface JobPageProps {
   jobId: number | string;
@@ -42,15 +43,13 @@ interface ResponseData {
 
 export async function JobDetail({ jobId }: JobPageProps) {
   const session = await getServerSession(authOptions);
+  const role = session?.user.role;
+  //console.log(session);
+  let res: ResponseData;
 
-  const response = await fetch(URLS.GET_JOB_BY_ID(jobId), {
-    cache: "no-store",
-  });
+  res = await fetcher(URLS.GET_JOB_BY_ID(jobId));
 
-  const res: ResponseData = await response.json();
   const { data } = res;
-
-  console.log("DATA", data);
 
   return (
     <div className="flex gap-5 flex-col md:flex-row">
